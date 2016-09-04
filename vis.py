@@ -196,11 +196,11 @@ def onpick(event,simpath,target_list):
     thisstar = event.artist
     xdata,ydata = thisstar.get_data()
     ind = event.ind
-    print xdata[ind][0]
-    print ydata[ind][0]
+    print(xdata[ind][0])
+    print(ydata[ind][0])
     for target in target_list:
         if xdata[ind][0] == target['ra'] and ydata[ind][0] == target['dec']:
-            print target['name']
+            print(target['name'])
             plot_target(simpath,target)
             plt.show()
             break

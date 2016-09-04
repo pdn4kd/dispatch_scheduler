@@ -217,7 +217,7 @@ if __name__ == '__main__':
     random.seed(1)
     random.shuffle(sim.scheduler.target_list)
     sim.scheduler.target_list=sim.scheduler.target_list[:60]
-    ipdb.set_trace()
+##    ipdb.set_trace()
 #    targetlist=simbad_reader.read_simbad('./secret/eta_list.txt')
 #    for target in targetlist:
 #        sim.write_target_file(target)
@@ -267,7 +267,7 @@ if __name__ == '__main__':
             # (re)calculate the weights, which also orders them by weight
             sim.scheduler.calculate_weights()
 #            for target in sim.scheduler.target_list:
-#                print target['weight']
+#                print(target['weight'])
 #            ipdb.set_trace()
             for target in sim.scheduler.target_list:
                 # if the top target is still less than zero, wait five minutes
@@ -286,7 +286,7 @@ if __name__ == '__main__':
                 sim.time+=datetime.timedelta(minutes=target['exptime'])
                 break
             sim.time+=datetime.timedelta(minutes=5)
-    print obs_count
+    print(obs_count)
     ipdb.set_trace()
         
     pass
@@ -299,4 +299,4 @@ if __name__ == '__main__':
     # if out of simulation time frame
     #     end observation
         
-    print 'Completed simulation '+sim.sim_name
+    print('Completed simulation '+sim.sim_name)

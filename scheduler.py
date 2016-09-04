@@ -93,7 +93,7 @@ class scheduler:
             self.target_list = sorted(self.target_list, key=lambda x:x[key])
             return True
         except:
-            print 'Something went wrong when sorting with ' + key
+            print('Something went wrong when sorting with ' + key)
             return False
 
     def choose_target(self):
@@ -212,7 +212,7 @@ class scheduler:
                 cad_weight = 0.
                 # if the last obs time was great than four hours ago, add a bit
 #                ipdb.set_trace()
-#                print (timeof-obs_hist[-1][1]).total_seconds()>4.*3600.
+#                print((timeof-obs_hist[-1][1]).total_seconds()>4.*3600.)
                 if (timeof-target['last_obs'][-1][0]).total_seconds()>24.*3600.:
 #                    print('cad boost to ' +target['name'])
                     cad_weight = 1.

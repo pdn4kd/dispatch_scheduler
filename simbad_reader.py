@@ -93,7 +93,7 @@ def filter(target_list,decmin=None,decmax=None,ramin=None,\
     # most likely to be able to auto clip targets that will never rise
     # if so, throw a warning to user
     if (decmin or decmax):
-        print 'Filtering for declination...'
+        print('Filtering for declination...')
         new_list_flag = True
         if decmin and decmax:
             for target in target_list:
@@ -112,7 +112,7 @@ def filter(target_list,decmin=None,decmax=None,ramin=None,\
 
     # check for RA limits, this is weird but why not include the option
     if (ramin or ramax):
-        print 'Filtering for right ascension...'
+        print('Filtering for right ascension...')
         new_list_flag = True
         if ramin and ramax:
             for target in target_list:
@@ -130,7 +130,7 @@ def filter(target_list,decmin=None,decmax=None,ramin=None,\
         new_list = []
 
     if (magvmin or magvmax):
-        print 'Filtering for magv...'
+        print('Filtering for magv...')
         new_list_flag = True
         if magvmin and magvmax:
             for target in target_list:
@@ -153,7 +153,7 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     ipdb.set_trace()
 #    tlist = read_simbad('sample_list.txt')
-    tlist = read_simbad('secret/eta_list.txt')#sample_list.txt')
+    tlist = read_simbad('secret/eta_list.txt')
     ipdb.set_trace()
     newlist = filter(tlist)
     ras = []

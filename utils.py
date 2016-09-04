@@ -24,5 +24,5 @@ if __name__ == '__main__':
     ipdb.set_trace()
     a1,b1 = 60.,89.
     a2,b2 = 60.,0.
-    print angular_distance(a1,b1,a2,b2,in_degrees=True)
+    print(angular_distance(a1,b1,a2,b2,in_degrees=True))
     ipdb.set_trace()
