@@ -8,7 +8,7 @@ import datetime
 import ephem
 import glob
 import simbad_reader
-import ipdb
+#import ipdb
 import math
 import os
 
@@ -206,7 +206,7 @@ def onpick(event,simpath,target_list):
             break
     return True
 if __name__ == '__main__':
-    ipdb.set_trace()
+    #ipdb.set_trace()
     # get the full target list
     target_list = simbad_reader.read_simbad('./secret/eta_list.txt')
     simnumber = raw_input('Enter sim number: ')
@@ -267,7 +267,7 @@ if __name__ == '__main__':
     fig.canvas.mpl_connect('pick_event',lambda event: onpick(event,simpath,target_list))
     plt.show()
     
-    ipdb.set_trace()
+    #ipdb.set_trace()
 
         
         

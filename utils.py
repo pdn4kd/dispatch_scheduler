@@ -20,9 +20,9 @@ def angular_distance(a1,b1,a2,b2,in_degrees=False):
 
 
 if __name__ == '__main__':
-    import ipdb
-    ipdb.set_trace()
+    #import ipdb
+    #ipdb.set_trace()
     a1,b1 = 60.,89.
     a2,b2 = 60.,0.
     print(angular_distance(a1,b1,a2,b2,in_degrees=True))
-    ipdb.set_trace()
+    #ipdb.set_trace()

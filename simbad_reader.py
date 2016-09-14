@@ -5,7 +5,7 @@ information. Produces a list of dictionaries, which is the same format that the
 spreadsheet reader will produce.
 """
 
-import ipdb
+#import ipdb
 import collections
 import copy
 
@@ -151,10 +151,10 @@ def filter(target_list,decmin=None,decmax=None,ramin=None,\
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
-    ipdb.set_trace()
+    #ipdb.set_trace()
 #    tlist = read_simbad('sample_list.txt')
     tlist = read_simbad('secret/eta_list.txt')
-    ipdb.set_trace()
+    #ipdb.set_trace()
     newlist = filter(tlist)
     ras = []
     decs = []
@@ -167,4 +167,4 @@ if __name__ == '__main__':
     plt.plot(ras,decs,'.')
 #    plt.plot(mags,'.')
     plt.show()
-    ipdb.set_trace()
+    #ipdb.set_trace()

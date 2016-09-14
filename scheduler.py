@@ -311,6 +311,7 @@ class scheduler:
                 # so it doesn't try and parse the header
                 pass
         if obs_list is []:
+            # Need better erroring out on a blank observation list.
             ipdb.set_trace()
         return obs_list
 
