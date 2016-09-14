@@ -340,7 +340,7 @@ class scheduler:
         # check if the star will be rising sometime tonight
         #TODO:
         # i think this checks for just a 24 hour period, but needs more 
-        # invetigation
+        # investigation
         if target['neverup']:
             #print(target['name']+" is never up")
             return False

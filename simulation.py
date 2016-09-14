@@ -43,7 +43,6 @@ class simulation:
         # create a scheduler for the sim
         self.scheduler = scheduler.scheduler('scheduler.ini')
         # get the weather stats
-        
         self.get_weather_probs('dailyprob.txt')
         # create the telescopes
         self.telescopes = []
@@ -191,7 +190,7 @@ class simulation:
             
     def check_weather(self,time):
         # weather stats are for 365 day year, reusing value of 0101 if it is a 
-        # lead year. 
+        # leap year. 
         daynumber = (time.timetuple().tm_yday-1)%364
         random.seed()
         prob = random.uniform(0,1)
