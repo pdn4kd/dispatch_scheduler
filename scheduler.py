@@ -197,7 +197,8 @@ class scheduler:
                     self.sep_limit:
                 return -1.
         except:
-            ipdb.set_trace()
+            #ipdb.set_trace()
+            print("exception")
                 
 
         if target['observed']>3:
@@ -446,6 +447,6 @@ class scheduler:
 #S -
 
 if __name__ == '__main__':
-    ipdb.set_trace()
+#    ipdb.set_trace()
     e = scheduler('scheduler.ini')
-    ipdb.set_trace()
+#    ipdb.set_trace()

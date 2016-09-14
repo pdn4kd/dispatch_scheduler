@@ -108,27 +108,25 @@ class simulation:
     def calc_exptime(self,target):
         return target['exptime']
 
-
-    def get_obs_history(self,target,prev_obs=1,simpath=None):
-        if simpath == None:
-            simpath = self.sim_path
-        # a function that 'tail's a target file to get the last prev_obs and 
-        # places the details in a list?
-        target_file = simpath+target['name']+'.txt'
-        raw_obs=\
-            subprocess.check_output(['tail','-n',str(prev_obs),target_file])
-        obs_lines = raw_obs.split('\n')[:-1]
-        obs_list = []
-        for line in obs_lines:
-            line = line.split('\t')
-            line[0] = datetime.datetime.strptime(line[0],self.dt_fmt)
-            line[1] = datetime.datetime.strptime(line[1],self.dt_fmt)
-            line[2] = float(line[2])
-            line[3] = float(line[3])
-            line[4] = float(line[4])
-            obs_list.append(line)
-        return obs_list
-            
+##    def get_obs_history(self,target,prev_obs=1,simpath=None):
+##        if simpath == None:
+##            simpath = self.sim_path
+##        # a function that 'tail's a target file to get the last prev_obs and 
+##        # places the details in a list?
+##        target_file = simpath+target['name']+'.txt'
+##        raw_obs=\
+##            subprocess.check_output(['tail','-n',str(prev_obs),target_file])
+##        obs_lines = raw_obs.split('\n')[:-1]
+##        obs_list = []
+##        for line in obs_lines:
+##            line = line.split('\t')
+##            line[0] = datetime.datetime.strptime(line[0],self.dt_fmt)
+##            line[1] = datetime.datetime.strptime(line[1],self.dt_fmt)
+##            line[2] = float(line[2])
+##            line[3] = float(line[3])
+##            line[4] = float(line[4])
+##            obs_list.append(line)
+##        return obs_list
 
     def record_observation(self,target,telescopes=None):
         obs_start = self.time
@@ -234,7 +232,7 @@ if __name__ == '__main__':
     obs_count=0
     total_exp = 0
     setimes = []
-    ipdb.set_trace()
+#    ipdb.set_trace()
     # while we are still in the simulation time frame
     while sim.time < sim.endtime:
         sim.update_time(sim.time)
@@ -278,7 +276,8 @@ if __name__ == '__main__':
 #                if sim.scheduler.is_observable(target):
                 total_exp += sim.calc_exptime(target)
                 if target['observed']>3:
-                    ipdb.set_trace()
+                    print("target >3")
+                    #ipdb.set_trace()
                 target['observed']+=1
 #                target['last_obs']=sim.time
                 sim.record_observation(target)
@@ -287,7 +286,7 @@ if __name__ == '__main__':
                 break
             sim.time+=datetime.timedelta(minutes=5)
     print(obs_count)
-    ipdb.set_trace()
+    #ipdb.set_trace()
         
     pass
     # plan
