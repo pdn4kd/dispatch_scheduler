@@ -63,3 +63,7 @@ target/
 
 #vim
 *.swp
+
+#Generated test files
+secret/
+results/
