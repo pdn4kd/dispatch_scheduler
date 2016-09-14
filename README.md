@@ -1,12 +1,12 @@
 # dispatch_scheduler
-A dispatch scheduler simulation that can be modified for personal work. Intended for work with MINERVA collaboration.
+A dispatch scheduler simulation that can be modified for personal work. Intended for work with MINERVA collaboration. This should work with both Python 2 and 3. Required libraries: collections, configobj, copy, datetime, ephem, glob, ipdb, math, matplotlib, numpy, os, random, subprocess, sys, time.
 
 # INPUT
 Details are pending some stick poking and/or talking with origional authors. Provisionally:
 
 Required configuration/input files:
-./config/scheduler.ini ./config/simulation.ini ./config/telescope.ini (Examples are included, and assume you are using the MMT on Mount Hopkins, AZ.)
-./dailyprob.txt, containing probabilities of good weather for every observing day. Example included.
+./config/scheduler.ini ./config/simulation.ini ./config/telescope.ini (Examples are included, and assume you are using the MINERVA array on Mount Hopkins, AZ.)
+./dailyprob.txt, containing probabilities of good weather for every observing day. Example included. This file has a minimum size (364 rows/days).
 
 ./secret/eta_list.txt
 This is a target list (presumably generated from SIMBAD and/or exoplanets.org data), with some details (name, location, magnitude, MKK spectral type, exposure time in decimal minutes). It is formatted like a SIMBAD list aside from having an additional exposure time column (and should appropriate scripts or queries be made functional a method will be documented).
@@ -22,7 +22,7 @@ would be 20160101.00001, 20160101.00002, and 20160102.00003.
 Each simulation directory contains a summary file titled as YYYYMMDD.#####.txt,
 which matches the name of the directory it was created in. This file will 
 contain some of the general information about the simulation, like the 
-start and end time, the name of the target list(?), and and others. I'm going 
+start and end time (in UTC), the name of the target list(?), and and others. I'm going 
 to put the docstring from the weighting funtion in, among other things. Still
 in formulation.
 
