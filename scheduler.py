@@ -32,7 +32,7 @@ class scheduler:
         #S LST and such
         self.base_directory = base_directory
         self.config_file = config_file
-        self.dt_fmt = '%Y%m%dT%H:%M:%S'
+        self.dt_fmt = '%Y-%m-%dT%H:%M:%S'
         # load the config file
         self.load_config()
         # make the observer which will be used in calculations and what not

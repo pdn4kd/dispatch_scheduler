@@ -13,12 +13,13 @@ import glob
 import subprocess
 from configobj import ConfigObj
 import simbad_reader
+import utils
 
 class simulation:
     def __init__(self,config_file,base_directory='.'):
         self.base_directory = base_directory
         self.config_file = config_file
-        self.dt_fmt = '%Y%m%dT%H:%M:%S'
+        self.dt_fmt = '%Y-%m-%dT%H:%M:%S'
         self.load_config()
         self.create_class_objects(tel_num=1)
         self.init_infofile(self.scheduler)
@@ -65,7 +66,7 @@ class simulation:
         a file that contains all the info for the simulation
         """
         self.sim_ind = self.get_sim_index()
-        today_str = datetime.datetime.utcnow().strftime('%Y%m%d')
+        today_str = datetime.datetime.utcnow().strftime('%Y-%m-%d')
         self.sim_name = today_str+'.%05d'%self.sim_ind
         self.sim_path = './results/'+self.sim_name+'/'
         # to give sim_path to scheduler
@@ -74,10 +75,10 @@ class simulation:
         except: os.mkdir(self.sim_path)
         with open(self.sim_path+self.sim_name+'.txt','w') as wfile:
             wfile.write('DATE RUN: '+today_str+'\n')
-            wfile.write('STARTTIME: '+self.starttime.strftime(self.dt_fmt)+\
-                            '\n')
-            wfile.write('ENDTIME: '+self.endtime.strftime(self.dt_fmt)+\
-                            '\n')
+            wfile.write('STARTTIME: '+utils.utc2bjd(self.starttime.strftime(\
+                            self.dt_fmt))+'\n')
+            wfile.write('ENDTIME: '+utils.utc2bjd(self.endtime.strftime(\
+                            self.dt_fmt))+'\n')
         
     def get_sim_index(self):
         # see if there is a place to put the sim results, make one if not
@@ -107,26 +108,6 @@ class simulation:
     def calc_exptime(self,target):
         return target['exptime']
 
-##    def get_obs_history(self,target,prev_obs=1,simpath=None):
-##        if simpath == None:
-##            simpath = self.sim_path
-##        # a function that 'tail's a target file to get the last prev_obs and 
-##        # places the details in a list?
-##        target_file = simpath+target['name']+'.txt'
-##        raw_obs=\
-##            subprocess.check_output(['tail','-n',str(prev_obs),target_file])
-##        obs_lines = raw_obs.split('\n')[:-1]
-##        obs_list = []
-##        for line in obs_lines:
-##            line = line.split('\t')
-##            line[0] = datetime.datetime.strptime(line[0],self.dt_fmt)
-##            line[1] = datetime.datetime.strptime(line[1],self.dt_fmt)
-##            line[2] = float(line[2])
-##            line[3] = float(line[3])
-##            line[4] = float(line[4])
-##            obs_list.append(line)
-##        return obs_list
-
     def record_observation(self,target,telescopes=None):
         obs_start = self.time
         exptime = self.calc_exptime(target)
@@ -144,8 +125,8 @@ class simulation:
 #        if target['fixedbody'].alt < 0:
 #            ipdb.set_trace()
         with open(self.sim_path+target['name']+'.txt','a') as target_file:
-            obs_string = obs_start.strftime(self.dt_fmt)+'\t'+\
-                obs_end.strftime(self.dt_fmt)+'\t'+\
+            obs_string = utils.utc2bjd(obs_start.strftime(self.dt_fmt))+'\t'+\
+                utils.utc2bjd(obs_end.strftime(self.dt_fmt))+'\t'+\
                 '%08.2f'%duration+'\t'+\
                 '%06.2f'%math.degrees(alt)+'\t'+\
                 '%07.2f'%math.degrees(azm)+' \t '+\
@@ -178,11 +159,11 @@ class simulation:
         with open(self.sim_path+'sunset.txt','a') as sunfile:
             # the time the sunsets
             sstime = self.scheduler.nextsunset(sim.time)
-            sunfile.write(sstime.strftime(self.dt_fmt+'\n'))
+            sunfile.write(utils.utc2bjd(sstime.strftime(self.dt_fmt))+'\n')
         with open(self.sim_path+'sunrise.txt','a') as sunfile:
             # the time the sunsets
             srtime = self.scheduler.nextsunrise(sim.time)
-            sunfile.write(srtime.strftime(self.dt_fmt+'\n'))
+            sunfile.write(utils.utc2bjd(srtime.strftime(self.dt_fmt))+'\n')
             
      
     def get_weather_probs(self,weatherfile=None):

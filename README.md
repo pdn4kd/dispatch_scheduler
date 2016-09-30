@@ -1,5 +1,5 @@
 # dispatch_scheduler
-A dispatch scheduler simulation that can be modified for personal work. Intended for work with MINERVA collaboration. Run simulation.py to start. These scripts should be compatible both Python 2 and 3. Required libraries: collections, configobj, copy, datetime, ephem, glob, ipdb*, math, matplotlib, numpy, os, random, subprocess, sys, time.
+A dispatch scheduler simulation that can be modified for personal work. Intended for work with MINERVA collaboration. Run 'simulation.py' to start. These scripts should be compatible both Python 2 and 3. Required libraries: collections, configobj, copy, datetime, ephem, glob, ipdb*, math, matplotlib, numpy, os, random, subprocess, sys, time.
 
 *currently attempting to deprecate.
 
@@ -8,8 +8,8 @@ A dispatch scheduler simulation that can be modified for personal work. Intended
 Details are pending some stick poking and/or talking with original authors. Provisionally:
 
 Required configuration/input files:
-./config/scheduler.ini ./config/simulation.ini ./config/telescope.ini (Examples are included, and assume you are using the MINERVA array on Mount Hopkins, AZ.)
-./dailyprob.txt, containing probabilities of good weather for every observing day. Example included. This file has a minimum size (364 rows/days).
+./config/scheduler.ini ./config/simulation.ini ./config/telescope.ini (Examples are included, and assume you are using the MINERVA array on Mount Hopkins, AZ. Also included are prefixed versions with more or less accurate data for the WIYN, LBT, and a backup of MINERVA)
+./dailyprob.txt, containing probabilities of good weather for every observing day. Example based off of Kitt Peak from 1999-2006 included. This file has a minimum size (364 rows/days).
 
 ./secret/eta_list.txt
 This is a target list (presumably generated from SIMBAD and/or exoplanets.org data), with some details (name, location, magnitude, MKK spectral type, exposure time in decimal minutes). It is formatted like a SIMBAD list aside from having an additional exposure time column (and should appropriate scripts or queries be made functional a method will be documented). This specific location may be modified in the configuration files if all the hard-coded parts are gone.
@@ -32,8 +32,8 @@ in formulation.
 Each target that was observed will have a a file titled NAME.txt, which 
 includes a single line header of the columns, and each row after being a successful observation. 
 The information for each observation may change. Presently shown are:
-* Observation start time (UTC)
-* Observation end time (UTC)
+* Observation start time (JD, easily changeable to other times)
+* Observation end time (JD, easily changeable to other times)
 * Duration of observation (decimal seconds)
 * Altitude (degrees)
 * Azimuth (degrees)

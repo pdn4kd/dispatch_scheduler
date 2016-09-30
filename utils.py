@@ -1,7 +1,11 @@
 """
 a compilation of multi use funtions
+angular_distance finds angular distance between 2 objects on sky
+utc2bjd converts the internal utc (ish) times to a string formatted
+(barycentric) Julian Day for easy switching of outputs.
 """
 import math
+from astropy.time import Time
 
 
 def angular_distance(a1,b1,a2,b2,in_degrees=False):
@@ -17,6 +21,12 @@ def angular_distance(a1,b1,a2,b2,in_degrees=False):
         return math.degrees(dist)
     else:
         return dist
+
+
+def utc2bjd(exampletime):
+    #exampletime format: 2016-01-01T19:05:00
+    t=Time([exampletime], format='isot', scale='utc')
+    return str(t.jd[0])
 
 
 if __name__ == '__main__':

@@ -16,7 +16,7 @@ def singletarget(sim,target):
     pass
 
 def get_sun(simpath):
-    dt_fmt = '%Y%m%dT%H:%M:%S'
+    dt_fmt = '%Y-%m-dT%H:%M:%S'
     simname = simpath.split('/')[2]
     summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
     start = datetime.datetime.strptime(summ[1,1],dt_fmt)
@@ -45,7 +45,7 @@ def get_sun(simpath):
     return sr_days,sr_times,ss_days,ss_times
 
 def get_targ_rise_set(simpath,targetname):
-    dt_fmt = '%Y%m%dT%H:%M:%S'
+    dt_fmt = '%Y-%m-dT%H:%M:%S'
     simname = simpath.split('/')[2]
     summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
     start = datetime.datetime.strptime(summ[1,1],dt_fmt)
@@ -75,7 +75,7 @@ def get_targ_rise_set(simpath,targetname):
 
 def get_target(simpath,targetname):
 
-    dt_fmt = '%Y%m%dT%H:%M:%S'
+    dt_fmt = '%Y-%m-dT%H:%M:%S'
     simname = simpath.split('/')[2]
     summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
     start = datetime.datetime.strptime(summ[1,1],dt_fmt)
@@ -176,7 +176,7 @@ def plot_target(simpath,target):
     title_str =('%s: (%0.2f,%0.2f), Number of obs: %.1f')%(target['name'],target['ra'],target['dec'],target['num_obs'])
     
 
-    dt_fmt = '%Y%m%dT%H:%M:%S'
+    dt_fmt = '%Y-%m-dT%H:%M:%S'
     simname = simpath.split('/')[2]
     summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
 
