@@ -194,7 +194,8 @@ if __name__ == '__main__':
 
     random.seed(1)
     random.shuffle(sim.scheduler.target_list)
-    sim.scheduler.target_list=sim.scheduler.target_list[:60]
+    #change to get first/last x objects in list.
+    sim.scheduler.target_list=sim.scheduler.target_list[:]
 ##    ipdb.set_trace()
 #    targetlist=simbad_reader.read_simbad('./secret/eta_list.txt')
 #    for target in targetlist:

@@ -12,7 +12,7 @@ Required configuration/input files:
 ./dailyprob.txt, containing probabilities of good weather for every observing day. Example based off of Kitt Peak from 1999-2006 included. This file has a minimum size (364 rows/days).
 
 ./secret/eta_list.txt
-This is a target list (presumably generated from SIMBAD and/or exoplanets.org data), with some details (name, location, magnitude, MKK spectral type, exposure time in decimal minutes). It is formatted like a SIMBAD list aside from having an additional exposure time column (and should appropriate scripts or queries be made functional a method will be documented). This specific location may be modified in the configuration files if all the hard-coded parts are gone.
+This is a target list (presumably generated from SIMBAD and/or exoplanets.org data), with some details (name, location, magnitude, MKK spectral type, exposure time in decimal minutes). It is formatted like a SIMBAD list aside from having an additional exposure time column (and should appropriate scripts or queries be made functional a method will be documented). This specific location may be modified in the configuration files if all the hard-coded parts are gone. Allowed RA/Dec can be filtered by editing simbad_reader.py
 
 # OUTPUT
 All of the resulting information from a simulation run is recorded in the results
@@ -30,7 +30,8 @@ to put the docstring from the weighting funtion in, among other things. Still
 in formulation.
 
 Each target that was observed will have a a file titled NAME.txt, which 
-includes a single line header of the columns, and each row after being a successful observation. 
+includes a single line header of the columns, and each row after being a successful observation. The first observation line is just an initialization, and should not be considered. (An observable object with 0 successful observations will have 2 lines in its output file)
+Objects that are not observable (due to telescope limits, dec, RA vs time of year, etc) will not get rise/set files.
 The information for each observation may change. Presently shown are:
 * Observation start time (JD, easily changeable to other times)
 * Observation end time (JD, easily changeable to other times)
