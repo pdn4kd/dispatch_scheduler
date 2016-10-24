@@ -34,7 +34,7 @@ def read_simbad(simbad_output):
         if 'coord' in key: key = key.split('(')[0]
         key_list.append(key)
     target_list = []# collections.OrderedDict()
-    for target in lines[7:-3]:
+    for target in lines[7:]:
 #        target_name = "".join(target.split('\t')[1].split())       
         target_list.append(collections.OrderedDict())
         ind = 0
