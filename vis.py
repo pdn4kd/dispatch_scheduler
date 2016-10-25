@@ -209,7 +209,7 @@ if __name__ == '__main__':
     #ipdb.set_trace()
     # get the full target list
     target_list = simbad_reader.read_simbad('./secret/eta_list.txt')
-    simnumber = raw_input('Enter sim number: ')
+    simnumber = input('Enter sim number: ')
     simpath = glob.glob('./results/*.'+simnumber+'/')[0]
     os.stat(simpath)
     
