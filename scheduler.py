@@ -148,7 +148,7 @@ class scheduler:
         #S going to use simple HA weighting for now.
         for target in self.target_list:
             if self.is_observable(target):
-                target['weight'] = self.calc_weight1(target,timeof=self.time)
+                target['weight'] = self.calc_weight3(target,timeof=self.time)
             else:
                 target['weight'] = -999
         self.target_list = sorted(self.target_list, key=lambda x:-x['weight'])
@@ -178,6 +178,7 @@ class scheduler:
             target['fixedbody'].compute(self.obs)
 
         
+# This is the full minerva weighting with trying to get 3 observations every night
     def calc_weight1(self,target,timeof=None,obspath=None):
 
         # need some sort of default for the obs path
@@ -249,6 +250,99 @@ class scheduler:
         return threeobs_weight+cad_weight
             
             
+# no multiple observations in a night, weighting by sin(altitude) with a linear-weight along with time since last observation
+    def calc_weight2(self,target,timeof=None,obspath=None):
+
+        # need some sort of default for the obs path
+        if obspath == None:
+            obspath = self.sim_path
+
+        # if now timeof provided, use current utc
+        if timeof == None:
+            timeof = datetime.datetime.utcnow()
+
+        #S if the target was observed less than the separation time limit
+        #S between observations, then we give it an 'unobservable' weight.
+        # just comment out if you want a random start time
+#        self.start_ha = -self.sep_limit/3600.
+        try:
+            if (timeof-target['last_obs'][-1][0]).total_seconds()<\
+                    self.sep_limit:
+                return -1.
+        except:
+            ipdb.set_trace()
+                
+
+#        if target['observed']>3:
+#            return -1.
+
+        cad_weight = 0.
+        try:
+                # add weight for longest since last observed
+                lastobs = (timeof-target['last_obs'][-1][0]).total_seconds() / (24.*3600.)
+                cad_weight = lastobs
+        except:
+            cad_weight = 0.
+ 
+	# note; this weighting downweights stars at poor declinations that never get to high altitudes.  
+        self.obs.date = timeof
+        self.obs.horizon = str(self.target_horizon)
+        target['fixedbody'].compute(self.obs)
+        star=math.sin(target['fixedbody'].alt)
+        horiz=math.sin(math.radians(float(self.target_horizon)))       
+        if star<horiz:
+            obs_weight=0
+        else:
+            obs_weight =(star-horiz)/(1.0-horiz)
+
+#        target_ha=(math.degrees(self.obs.sidereal_time())-target['ra'])
+#        obs_weight= np.exp(-((target_ha-self.start_ha)**2./(2.*1.0**2.)))
+
+        return obs_weight*cad_weight
+
+
+# no multiple observations in a night, weighting by hour-angle with a linear-weight along with time since last observation
+    def calc_weight3(self,target,timeof=None,obspath=None):
+
+        # need some sort of default for the obs path
+        if obspath == None:
+            obspath = self.sim_path
+
+        # if now timeof provided, use current utc
+        if timeof == None:
+            timeof = datetime.datetime.utcnow()
+
+        #S if the target was observed less than the separation time limit
+        #S between observations, then we give it an 'unobservable' weight.
+        # just comment out if you want a random start time
+#        self.start_ha = -self.sep_limit/3600.
+        try:
+            if (timeof-target['last_obs'][-1][0]).total_seconds()<\
+                    self.sep_limit:
+                return -1.
+        except:
+            #ipdb.set_trace()
+            print("exception")
+                
+
+#        if target['observed']>3:
+#            return -1.
+
+        cad_weight = 0.
+        try:
+                # add weight for longest days since last observed
+                lastobs = (timeof-target['last_obs'][-1][0]).total_seconds() / (24.*3600.)
+                cad_weight = lastobs
+        except:
+            cad_weight = 0.#boop?
+ 
+	# note; this weighting downweights stars at poor declinations that never get to high altitudes.  
+        target_ha=(math.degrees(self.obs.sidereal_time())-target['ra'])
+        obs_weight= 1.-np.abs(target_ha/6)
+
+        return obs_weight*cad_weight
+
+
     def prep_night(self,timeof=None,init_run=False):
         """
         A function to go through some processes that only need to be done at 
