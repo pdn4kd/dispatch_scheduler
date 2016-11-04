@@ -99,9 +99,13 @@ class simulation:
                 tele_list = [tele_list]
         tele_list = [x-1 for x in tele_list]
     
+#    def write_target_file(self,target):
+#        header = 'obs_start \t obs_end \t duration \t altitude \t azimuth '+\
+#            '\t quality'
+#        with open(self.sim_path+target['name']+'.txt','w') as target_file:
+#            target_file.write(header+'\n')
     def write_target_file(self,target):
-        header = 'obs_start \t obs_end \t duration \t altitude \t azimuth '+\
-            '\t quality'
+        header = 'obs_start,obs_end,duration,altitude,azimuth,quality'
         with open(self.sim_path+target['name']+'.txt','w') as target_file:
             target_file.write(header+'\n')
 
@@ -125,11 +129,11 @@ class simulation:
 #        if target['fixedbody'].alt < 0:
 #            ipdb.set_trace()
         with open(self.sim_path+target['name']+'.txt','a') as target_file:
-            obs_string = utils.utc2bjd(obs_start.strftime(self.dt_fmt))+'\t'+\
-                utils.utc2bjd(obs_end.strftime(self.dt_fmt))+'\t'+\
-                '%08.2f'%duration+'\t'+\
-                '%06.2f'%math.degrees(alt)+'\t'+\
-                '%07.2f'%math.degrees(azm)+' \t '+\
+            obs_string = utils.utc2bjd(obs_start.strftime(self.dt_fmt))+','+\
+                utils.utc2bjd(obs_end.strftime(self.dt_fmt))+','+\
+                '%08.2f'%duration+','+\
+                '%06.2f'%math.degrees(alt)+','+\
+                '%07.2f'%math.degrees(azm)+' , '+\
                 '%i'%obs_quality+\
                 '\n'         
             print(target['name']+': '+obs_string)
@@ -148,11 +152,11 @@ class simulation:
         with open(self.sim_path+target['name']+'set.txt','a') as targetfile:
             tstime = self.scheduler.obs.next_setting(\
                 target['fixedbody'],start=self.time).datetime()
-            targetfile.write(tstime.strftime(self.dt_fmt+'\n'))
+            targetfile.write(utils.utc2bjd(tstime.strftime(self.dt_fmt))+'\n')
         with open(self.sim_path+target['name']+'rise.txt','a') as targetfile:
             trtime = self.scheduler.obs.next_rising(\
                 target['fixedbody'],start=self.time).datetime()
-            targetfile.write(trtime.strftime(self.dt_fmt+'\n'))
+            targetfile.write(utils.utc2bjd(trtime.strftime(self.dt_fmt))+'\n')
 
                       
     def record_sun(self):
@@ -195,7 +199,7 @@ if __name__ == '__main__':
     random.seed(1)
     random.shuffle(sim.scheduler.target_list)
     #change to get first/last x objects in list.
-    sim.scheduler.target_list=sim.scheduler.target_list[:]
+    sim.scheduler.target_list=sim.scheduler.target_list[:3]
 ##    ipdb.set_trace()
 #    targetlist=simbad_reader.read_simbad('./secret/eta_list.txt')
 #    for target in targetlist:

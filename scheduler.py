@@ -21,6 +21,7 @@ import datetime
 import time
 import subprocess
 from configobj import ConfigObj
+import utils
 
 ###
 # SCHEDULER
@@ -317,13 +318,13 @@ class scheduler:
         # just comment out if you want a random start time
 #        self.start_ha = -self.sep_limit/3600.
         try:
-            if (timeof-target['last_obs'][-1][0]).total_seconds()<\
+            if (timeof-target['last_obs'][1]).total_seconds()<\
                     self.sep_limit:
                 return -1.
         except:
             #ipdb.set_trace()
-            print("exception")
-                
+            print("timeof: ", timeof)
+            print("exception: target['last_obs'] == ", target['last_obs'], "\n")
 
 #        if target['observed']>3:
 #            return -1.
@@ -334,11 +335,12 @@ class scheduler:
                 lastobs = (timeof-target['last_obs'][-1][0]).total_seconds() / (24.*3600.)
                 cad_weight = lastobs
         except:
-            cad_weight = 0.#boop?
+            cad_weight = 0.#boop weight to 1 instead?
+            print('boop\n')
  
 	# note; this weighting downweights stars at poor declinations that never get to high altitudes.  
         target_ha=(math.degrees(self.obs.sidereal_time())-target['ra'])
-        obs_weight= 1.-np.abs(target_ha/6)
+        obs_weight= 1.-np.abs(target_ha/6.0)
 
         return obs_weight*cad_weight
 
@@ -387,27 +389,30 @@ class scheduler:
         # a function that 'tail's a target file to get the last prev_obs and
         # places the details in a list?
         # add a line for the empty one at the end of a file?
+        # Could probably be done better with np.genfromtxt and array slicing.
         target_file = simpath+target['name']+'.txt'
         raw_obs=\
             subprocess.check_output(['tail','-n',str(prev_obs),target_file])
-        obs_lines = raw_obs.split('\n')[:-1]
+        obs_lines = str(raw_obs).split(',')[:-1]
         obs_list = []
-        for line in obs_lines:
-            try:
-                line = line.split('\t')
-                line[0] = datetime.datetime.strptime(line[0],self.dt_fmt)
-                line[1] = datetime.datetime.strptime(line[1],self.dt_fmt)
-                line[2] = float(line[2])
-                line[3] = float(line[3])
-                line[4] = float(line[4])
-                obs_list.append(line)
-            except:
-                # so it doesn't try and parse the header
-                pass
+        try:
+            #line = line.split('\t')
+            obs_lines[0] = datetime.datetime.strptime(utils.bjd2utc(obs_lines[0][2:]),self.dt_fmt)
+            obs_lines[1] = datetime.datetime.strptime(utils.bjd2utc(obs_lines[1]),self.dt_fmt)
+            #obs_lines[0] = utils.bjd2utc(obs_lines[0][2:])
+            #obs_lines[1] = utils.bjd2utc(obs_lines[1])
+            obs_lines[2] = float(obs_lines[2])
+            obs_lines[3] = float(obs_lines[3])
+            obs_lines[4] = float(obs_lines[4])
+            #obs_list.append(line)
+        except:
+            # so it doesn't try and parse the header
+            pass
         if obs_list is []:
             # Need better erroring out on a blank observation list.
             ipdb.set_trace()
-        return obs_list
+        return obs_lines
+        #return obs_list
 
 
     def is_observable(self,target,timeof=None):

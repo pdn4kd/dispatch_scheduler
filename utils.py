@@ -24,9 +24,15 @@ def angular_distance(a1,b1,a2,b2,in_degrees=False):
 
 
 def utc2bjd(exampletime):
-    #exampletime format: 2016-01-01T19:05:00
+    #exampletime format: '2014-12-08T12:00:00.000'
     t=Time([exampletime], format='isot', scale='utc')
     return str(t.jd[0])
+
+
+def bjd2utc(exampletime):
+    #exampletime format: 2547000.0
+    t=Time(float(exampletime), format='jd', scale='utc', precision=0)
+    return t.isot
 
 
 if __name__ == '__main__':
