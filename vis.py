@@ -11,17 +11,18 @@ import simbad_reader
 #import ipdb
 import math
 import os
+import utils
 
 def singletarget(sim,target):
     pass
 
 def get_sun(simpath):
-    dt_fmt = '%Y-%m-dT%H:%M:%S'
+    dt_fmt = '%Y-%m-%dT%H:%M:%S'
     simname = simpath.split('/')[2]
     summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
-    start = datetime.datetime.strptime(summ[1,1],dt_fmt)
+    start = datetime.datetime.strptime(utils.bjd2utc(summ[1,1]),dt_fmt)
     strrises = np.genfromtxt(simpath+'sunrise.txt',dtype=None)
-    srises = [datetime.datetime.strptime(dstr,dt_fmt) for dstr in strrises]
+    srises = [datetime.datetime.strptime(utils.bjd2utc(dstr),dt_fmt) for dstr in strrises]
     sr_days = []
     sr_times = []
     for srise in srises:
@@ -33,7 +34,7 @@ def get_sun(simpath):
     sr_times=np.array(sr_times)
 
     strsets = np.genfromtxt(simpath+'sunset.txt',dtype=None)
-    ssets = [datetime.datetime.strptime(dstr,dt_fmt) for dstr in strsets]
+    ssets = [datetime.datetime.strptime(utils.bjd2utc(dstr),dt_fmt) for dstr in strsets]
     ss_days = []
     ss_times = []
     for sset in ssets:
@@ -45,12 +46,12 @@ def get_sun(simpath):
     return sr_days,sr_times,ss_days,ss_times
 
 def get_targ_rise_set(simpath,targetname):
-    dt_fmt = '%Y-%m-dT%H:%M:%S'
+    dt_fmt = '%Y-%m-%dT%H:%M:%S'
     simname = simpath.split('/')[2]
     summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
-    start = datetime.datetime.strptime(summ[1,1],dt_fmt)
+    start = datetime.datetime.strptime(utils.bjd2utc(summ[1,1]),dt_fmt)
     strrises = np.genfromtxt(simpath+targetname+'rise.txt',dtype=None)
-    srises = [datetime.datetime.strptime(dstr,dt_fmt) for dstr in strrises]
+    srises = [datetime.datetime.strptime(utils.bjd2utc(dstr),dt_fmt) for dstr in strrises]
     sr_days = []
     sr_times = []
     for srise in srises:
@@ -62,7 +63,7 @@ def get_targ_rise_set(simpath,targetname):
     sr_times=np.array(sr_times)
 
     strsets = np.genfromtxt(simpath+targetname+'set.txt',dtype=None)
-    ssets = [datetime.datetime.strptime(dstr,dt_fmt) for dstr in strsets]
+    ssets = [datetime.datetime.strptime(utils.bjd2utc(dstr),dt_fmt) for dstr in strsets]
     ss_days = []
     ss_times = []
     for sset in ssets:
@@ -75,13 +76,12 @@ def get_targ_rise_set(simpath,targetname):
 
 def get_target(simpath,targetname):
 
-    dt_fmt = '%Y-%m-dT%H:%M:%S'
+    dt_fmt = '%Y-%m-%dT%H:%M:%S'
     simname = simpath.split('/')[2]
     summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
-    start = datetime.datetime.strptime(summ[1,1],dt_fmt)
-    temp = np.genfromtxt(simpath+targetname+'.txt',names=True,dtype=None)
-    start = datetime.datetime.strptime(summ[1,1],dt_fmt)
-    obs = [datetime.datetime.strptime(dstr,dt_fmt) \
+    start = datetime.datetime.strptime(utils.bjd2utc(summ[1,1]),dt_fmt)
+    temp = np.genfromtxt(simpath+targetname+'.txt',names=True,dtype=None,delimiter=',')
+    obs = [datetime.datetime.strptime(utils.bjd2utc(dstr),dt_fmt) \
                for dstr in temp['obs_start']]
 #    ipdb.set_trace()
     alts = temp['altitude']
@@ -173,15 +173,15 @@ def plot_target(simpath,target):
     
     # Put a legend to the right of the current axis
     ax1.legend()#loc='center left', bbox_to_anchor=(1, 0.5),borderaxespad=0.)
-    title_str =('%s: (%0.2f,%0.2f), Number of obs: %.1f')%(target['name'],target['ra'],target['dec'],target['num_obs'])
+    title_str =('%s: (%0.2f,%0.2f), Number of obs: %d')%(target['name'],target['ra'],target['dec'],target['num_obs'])
     
 
-    dt_fmt = '%Y-%m-dT%H:%M:%S'
+    dt_fmt = '%Y-%m-%dT%H:%M:%S'
     simname = simpath.split('/')[2]
     summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
 
     ax1.set_title(title_str)
-    ax1.set_xlabel('Days from '+summ[1,1][:8])
+    ax1.set_xlabel('Days from '+str(float(summ[1,1][:8])))
     ax1.set_ylabel('Hours from UTC 00:00:00')
 #    ax2 = figt.add_subplot(2,1,2)
 #    ax2.plot(days,alts,'.')
@@ -209,9 +209,10 @@ if __name__ == '__main__':
     #ipdb.set_trace()
     # get the full target list
     target_list = simbad_reader.read_simbad('./secret/eta_list.txt')
-    simnumber = input('Enter sim number: ')
+    simnumber = input('Enter 5 digit sim number (including any leading zeros): ')
     simpath = glob.glob('./results/*.'+simnumber+'/')[0]
     os.stat(simpath)
+    print(simpath)
     
     all_ras = []
     all_decs = []
