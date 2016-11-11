@@ -115,10 +115,10 @@ def plot_target(simpath,target):
 
 
     figt = plt.figure()#figsize=(11,6))
-    ax2 = figt.add_subplot(2,1,2)
-    freqs = np.linspace(0,365,100000)
+    ax2 = figt.add_subplot(2,1,2) #spacing for the plots
+    freqs = np.linspace(1e-6,365.25,100000)
     win_func = window_function(freqs,dec_times)
-    plt.plot(freqs,np.absolute(win_func))
+    plt.plot(freqs,np.absolute(win_func), color="#000000", linewidth=2)
     ax1 = figt.add_subplot(2,1,1)
     ax1.plot(sr_days,sr_times,label='sun rises')
     ax1.plot(ss_days,ss_times,label='sun sets')
@@ -169,7 +169,9 @@ def plot_target(simpath,target):
                     np.max(sr_times)+.2*np.max(sr_times)])
 
     box = ax.get_position()
-    ax1.set_position([box.x0, box.y0, box.width * 1.2, box.height])
+    #ax1.set_position([box.x0, box.y0, box.width * 1.2, box.height])#removed due to breaking display
+    ax1.set_xlim(left=box.x0)
+    ax1.set_ylim(bottom=box.y0)
     
     # Put a legend to the right of the current axis
     ax1.legend()#loc='center left', bbox_to_anchor=(1, 0.5),borderaxespad=0.)
@@ -183,6 +185,8 @@ def plot_target(simpath,target):
     ax1.set_title(title_str)
     ax1.set_xlabel('Days from '+str(float(summ[1,1][:8])))
     ax1.set_ylabel('Hours from UTC 00:00:00')
+    ax2.set_xlabel('Period (Days)')
+    ax2.set_ylabel('Aliasing')
 #    ax2 = figt.add_subplot(2,1,2)
 #    ax2.plot(days,alts,'.')
     plt.show()
