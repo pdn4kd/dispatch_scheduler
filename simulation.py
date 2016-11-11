@@ -133,7 +133,7 @@ class simulation:
                 utils.utc2bjd(obs_end.strftime(self.dt_fmt))+','+\
                 '%08.2f'%duration+','+\
                 '%06.2f'%math.degrees(alt)+','+\
-                '%07.2f'%math.degrees(azm)+' , '+\
+                '%07.2f'%math.degrees(azm)+','+\
                 '%i'%obs_quality+\
                 '\n'         
             print(target['name']+': '+obs_string)
@@ -199,7 +199,7 @@ if __name__ == '__main__':
     random.seed(1)
     random.shuffle(sim.scheduler.target_list)
     #change to get first/last x objects in list.
-    sim.scheduler.target_list=sim.scheduler.target_list[:3]
+    sim.scheduler.target_list=sim.scheduler.target_list[:30]
 ##    ipdb.set_trace()
 #    targetlist=simbad_reader.read_simbad('./secret/eta_list.txt')
 #    for target in targetlist:
