@@ -149,7 +149,7 @@ class scheduler:
         #S going to use simple HA weighting for now.
         for target in self.target_list:
             if self.is_observable(target):
-                target['weight'] = self.calc_weight3(target,timeof=self.time)
+                target['weight'] = self.calc_weight4(target,timeof=self.time)
             else:
                 target['weight'] = -999
         self.target_list = sorted(self.target_list, key=lambda x:-x['weight'])
@@ -336,13 +336,70 @@ class scheduler:
                 cad_weight = lastobs
         except:
             cad_weight = 0.#boop weight to 1 instead?
-            print('boop\n')
+            print('Error: lastobs timing. Zeroing weight.\n')
  
 	# note; this weighting downweights stars at poor declinations that never get to high altitudes.  
         target_ha=(math.degrees(self.obs.sidereal_time())-target['ra'])
         obs_weight= 1.-np.abs(target_ha/6.0)
 
         return obs_weight*cad_weight
+
+
+    def calc_weight4(self,target,timeof=None,obspath=None,latitude=None):
+        print(target['name'])
+
+        # need some sort of default for the obs path
+        if obspath == None:
+            obspath = self.sim_path
+
+        # if now timeof provided, use current utc
+        if timeof == None:
+            timeof = datetime.datetime.utcnow()
+
+        #S if the target was observed less than the separation time limit
+        #S between observations, then we give it an 'unobservable' weight.
+        # just comment out if you want a random start time
+#        self.start_ha = -self.sep_limit/3600.
+        try:
+            if (timeof-target['last_obs'][1]).total_seconds()<\
+                    self.sep_limit:
+                return -1.
+        except:
+            #ipdb.set_trace()
+            print("timeof: ", timeof)
+            print("exception: target['last_obs'] == ", target['last_obs'], "\n")
+
+        cad_weight = 0.
+
+        try:
+            # add weight for longest days since last observed
+            lastobs = (timeof-target['last_obs'][1]).total_seconds() / (24.*3600.)
+            cad_weight = lastobs
+            print("Lastobs time weighting:", cad_weight)
+        except:
+            cad_weight = 0.#boop weight to 1 instead?
+            print('Error: lastobs timing. Zeroing weight.')
+ 
+        target_ha=(math.degrees(self.obs.sidereal_time())/15-target['ra'])
+        obs_weight= 1.-np.abs(target_ha/6.0) #allows obs to horizon, but okay if min-alt works
+        print("HA weight:", target_ha)
+
+        #generic weighting because some objects will get observed less often due to poor decs
+#        if (latitude == None):
+#            latitude = self.latitude
+#
+#        try: 
+#            time_weight=math.pi/math.acos(-math.tan(math.radians(target['dec']))*math.tan(math.radians(float(latitude))))
+#            print("Time weighting:", time_weight)
+#        except:
+#            time_weight=1.0
+#
+#        if(math.radians(float(latitude)) >= np.pi/2-math.radians(target['dec'])):
+#            time_weight=0.1
+#            print("Time weighting:", time_weight)
+        time_weight=1.0
+        print("Net Weighting: ", obs_weight*cad_weight*time_weight, '\n')
+        return obs_weight*cad_weight*time_weight
 
 
     def prep_night(self,timeof=None,init_run=False):
