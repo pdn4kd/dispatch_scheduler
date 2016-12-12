@@ -149,14 +149,98 @@ class scheduler:
         #S going to use simple HA weighting for now.
         for target in self.target_list:
             if self.is_observable(target):
-                target['weight'] = self.calc_weight4(target,timeof=self.time)
+                target['weight'] = self.weight_obstime(target,timeof=self.time)*self.weight_uptime(target,timeof=self.time)*self.weight_HA(target,timeof=self.time)
             else:
                 target['weight'] = -999
         self.target_list = sorted(self.target_list, key=lambda x:-x['weight'])
         #pass
 
+    def weight_HA(self,target,timeof=None):
+        """
+        Uses alternate HA weight formulation
+        weight = 1 - abs(norm(HA/RA)), 0 to 1 if
+        above horizon, 0 to -1 if below
+        """
+        #old algorithm, need to check units
+        #if target['observed']>1:
+        #    return -1
+        # temp set the horizon for targets
+        #self.obs.date = self.time
+        #lst = math.degrees(self.obs.sidereal_time())/15. #"hours"
+        #target['fixedbody'].compute(self.obs)
+        #return 1.-np.abs((lst-target['ra'])/12.)
 
-    def calc_weight(self,target):
+        #debugged HA weighting added by pdn, needs reviewing
+        target_ha=(math.degrees(self.obs.sidereal_time())/15-target['ra'])
+        obs_weight= 1.-np.abs(target_ha/6.0) #allows obs to horizon, but okay if min-alt works
+        print("Positioning diffs:", math.degrees(self.obs.sidereal_time())/15, target['ra'])
+        print("HA, weight:", target_ha, obs_weight)
+        return obs_weight
+
+
+    def weight_uptime(self,target,timeof=None,latitude=None):
+        """
+        Weighting based on amount of time object is above the horizon.
+        A better version would consider higher altitudes so that the scope 
+        can always point to the objects. Goes from 1 to 0 ish.
+        """
+        # if now timeof provided, use current utc
+        if timeof == None:
+            timeof = datetime.datetime.utcnow()
+
+        #generic weighting because some objects will get observed less often due to poor decs
+        if (latitude == None):
+            latitude = self.latitude
+
+        try: 
+            time_weight=1-np.arccos(-np.tan(math.radians(target['dec']))*math.np(math.radians(float(latitude))))
+            print("Time weighting:", time_weight)
+        except: #below horizon, circumpolar, or broken.
+            time_weight=0.0
+            print("Time weighting: unobservable")
+
+        # We don't care about circumpolar objects that much
+        if(math.radians(float(latitude)) >= np.pi/2-math.radians(target['dec'])):
+            time_weight=0.1
+            print("Time weighting:", time_weight)
+
+        return time_weight
+
+
+    def weight_obstime(self,target,timeof=None,latitude=None):
+        """
+        """
+        # if now timeof provided, use current utc
+        if timeof == None:
+            timeof = datetime.datetime.utcnow()
+
+        #S if the target was observed less than the separation time limit
+        #S between observations, then we give it an 'unobservable' weight.
+        # just comment out if you want a random start time
+#        self.start_ha = -self.sep_limit/3600.
+        try:
+            if (timeof-target['last_obs'][1]).total_seconds()<\
+                    self.sep_limit:
+                return -1.
+        except:
+            print("timeof: ", timeof)
+            print("exception: target['last_obs'] == ", target['last_obs'], "\n")
+
+        cad_weight = 0.
+
+        try:
+            # add weight for longest days since last observed
+            lastobs = (timeof-target['last_obs'][1]).total_seconds() / (86400.)
+            cad_weight = lastobs
+            print("Lastobs time weighting:", cad_weight)
+        except:
+            cad_weight = 0.#boop weight to 1 instead?
+            print('Error: lastobs timing. Zeroing weight.')
+        return cad_weight
+ 
+
+
+    def calc_weight(self,target,timeof=None):
         """
         simple, just going to weight for current ha sort of
         weight = 1 - abs(HA/RA)
@@ -179,9 +263,10 @@ class scheduler:
             target['fixedbody'].compute(self.obs)
 
         
-# This is the full minerva weighting with trying to get 3 observations every night
     def calc_weight1(self,target,timeof=None,obspath=None):
-
+        """
+        This is the full minerva weighting with trying to get 3 observations every night
+        """
         # need some sort of default for the obs path
         if obspath == None:
             obspath = self.sim_path
@@ -195,7 +280,7 @@ class scheduler:
         # just comment out if you want a random start time
 #        self.start_ha = -self.sep_limit/3600.
         try:
-            if (timeof-target['last_obs'][-1][0]).total_seconds()<\
+            if (timeof-target['last_obs'][1]).total_seconds()<\
                     self.sep_limit:
                 return -1.
         except:
@@ -385,18 +470,18 @@ class scheduler:
         print("HA weight:", target_ha)
 
         #generic weighting because some objects will get observed less often due to poor decs
-#        if (latitude == None):
-#            latitude = self.latitude
-#
-#        try: 
-#            time_weight=math.pi/math.acos(-math.tan(math.radians(target['dec']))*math.tan(math.radians(float(latitude))))
-#            print("Time weighting:", time_weight)
-#        except:
-#            time_weight=1.0
-#
-#        if(math.radians(float(latitude)) >= np.pi/2-math.radians(target['dec'])):
-#            time_weight=0.1
-#            print("Time weighting:", time_weight)
+        if (latitude == None):
+            latitude = self.latitude
+
+        try: 
+            time_weight=math.pi/math.acos(-math.tan(math.radians(target['dec']))*math.tan(math.radians(float(latitude))))
+            print("Time weighting:", time_weight)
+        except:
+            time_weight=1.0
+
+        if(math.radians(float(latitude)) >= np.pi/2-math.radians(target['dec'])):
+            time_weight=0.1
+            print("Time weighting:", time_weight)
         time_weight=1.0
         print("Net Weighting: ", obs_weight*cad_weight*time_weight, '\n')
         return obs_weight*cad_weight*time_weight
