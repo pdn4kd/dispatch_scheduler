@@ -149,11 +149,20 @@ class scheduler:
         #S going to use simple HA weighting for now.
         for target in self.target_list:
             if self.is_observable(target):
-                target['weight'] = self.weight_obstime(target,timeof=self.time)*self.weight_uptime(target,timeof=self.time)*self.weight_HA(target,timeof=self.time)
+                target['weight'] = self.weight_obstime(target,timeof=self.time)*self.weight_uptime(target,timeof=self.time,latitude=self.latitude,min_alt=30)*self.weight_HA(target,timeof=self.time)
             else:
                 target['weight'] = -999
         self.target_list = sorted(self.target_list, key=lambda x:-x['weight'])
         #pass
+
+    def weight_weather(self,target,timeof=None):
+        """
+        Generates a weighting based on very rough weather estimate.
+        Returned value is 1/probability of clear skys when target transits 
+        meridian at midnight LST.
+        """
+        weather_weight = 1
+        return weather_weight
 
     def weight_HA(self,target,timeof=None):
         """
@@ -178,13 +187,13 @@ class scheduler:
         return obs_weight
 
 
-    def weight_uptime(self,target,timeof=None,latitude=None):
+    def weight_uptime(self,target,timeof=None,latitude=None,min_alt=None):
         """
-        Weighting based on amount of time object is above the horizon.
-        A better version would consider higher altitudes so that the scope 
+        Weighting based on amount of time object is above a given altitude 
+        (0 == horizon). Weighting does not really consider if object is observable. 
         can always point to the objects. Goes from 1 to 0 ish.
         """
-        # if now timeof provided, use current utc
+        # if no timeof provided, use current utc
         if timeof == None:
             timeof = datetime.datetime.utcnow()
 
@@ -192,11 +201,15 @@ class scheduler:
         if (latitude == None):
             latitude = self.latitude
 
+        # if no minimum altitude is supplied, go with config file.
+        if (min_alt == None):
+            min_alt = self.target_horizon
+
         try: 
-            time_weight=1-np.arccos(-np.tan(math.radians(target['dec']))*math.np(math.radians(float(latitude))))
+            time_weight = 1-np.arccos((np.sin(min_alt)-np.sin(math.radians(target['dec']))*np.sin(math.radians(float(latitude))))/(np.cos(math.radians(target['dec']))*np.cos(math.radians(float(latitude)))))/np.pi
             print("Time weighting:", time_weight)
         except: #below horizon, circumpolar, or broken.
-            time_weight=0.0
+            time_weight = 0.0
             print("Time weighting: unobservable")
 
         # We don't care about circumpolar objects that much
