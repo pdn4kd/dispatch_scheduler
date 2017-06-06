@@ -9,6 +9,7 @@ import sys
 import os
 import ephem
 import datetime
+import math
 
 
 class telescope:
@@ -27,6 +28,16 @@ class telescope:
         except:
             print('ERROR accessing configuration file: ' + self.config_file)
             sys.exit()
+        try:
+            self.area = float(config['Setup']['AREA'])
+        except:
+            try:
+                self.diameter = float(config['Setup']['DIAMETER'])
+                self.area = math.pi*self.diameter**2
+            except:
+                print('ERROR accessing configuration file: ' + self.config_file)
+                sys.exit()
+
     
 
     def acquire_target(self,target):
