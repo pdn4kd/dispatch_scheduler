@@ -28,6 +28,7 @@ contains some of the general information about the simulation, like the
 start and end time (in UTC), the name of the target list(?), and and others. I'm going 
 to put the docstring from the weighting funtion in, among other things. Still
 in formulation.
+*This is innacurate, but a useful template -- pdn4kd
 
 Each target that was observed will have a a file titled NAME.txt, which 
 includes a single line header of the columns, and each row after being a successful observation. The first observation line is just an initialization, and should not be considered. (An observable object with 0 successful observations will have 2 lines in its output file)
