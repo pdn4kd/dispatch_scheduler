@@ -40,5 +40,9 @@ if __name__ == '__main__':
     #ipdb.set_trace()
     a1,b1 = 60.,89.
     a2,b2 = 60.,0.
-    print(angular_distance(a1,b1,a2,b2,in_degrees=True))
+    print("Angular distance between ("+str(a1)+","+str(b1)+") and ("+str(a2)+","+str(b2)+"): ", angular_distance(a1,b1,a2,b2,in_degrees=True))
     #ipdb.set_trace()
+    time_utc = '2009-03-07T03:49:57.000'
+    time_bjd = 2454976.65969
+    print("BJD->UTC conversion of "+str(time_bjd)+": ", bjd2utc(time_bjd))
+    print("UTC->BJD conversion of "+str(time_utc)+": ", utc2bjd(time_utc))
