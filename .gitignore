@@ -1,3 +1,9 @@
+# Other results
+*.csv
+*.tsv
+*.png
+*.pdf
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -63,6 +69,7 @@ target/
 
 #vim
 *.swp
+.vimrc
 
 #Generated test files
 secret/
