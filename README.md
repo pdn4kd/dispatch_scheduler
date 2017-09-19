@@ -1,5 +1,5 @@
 # dispatch_scheduler
-A dispatch scheduler simulation that can be modified for personal work. Intended for work with MINERVA collaboration. Run 'simulation.py' to start. These scripts should be compatible both Python 2 and 3. Required libraries: collections, configobj, copy, datetime, ephem, glob, ipdb*, math, matplotlib, numpy, os, random, subprocess, sys, time.
+A dispatch scheduler simulation that can be modified for personal work. Intended for work with MINERVA collaboration. Run 'simulation.py' to start, or 'vis.py' to visualize the results of previous runs. These scripts should be compatible both Python 2 and 3. Required libraries: collections, configobj, copy, datetime, ephem, glob, ipdb*, math, matplotlib, numpy, os, random, subprocess, sys, time.
 
 *currently attempting to deprecate.
 
@@ -46,4 +46,4 @@ There are also some other files, like sunrise.txt, sunset.txt, and for each
 target, a NAMErise.txt and NAMEset.txt, which are mostly used in the plotting 
 function vis.py. NAMErise/set files give the rise/set times for that object for the entire simulation period.
 
-i.e.:If the period was 1079 days, and only 475 were suitable for observation, NAMErise.txt will have 1079 lines of data, while NAME.txt will have only 475
+i.e.:If the period was 1079 days, and only 475 were suitable for observation, NAMErise.txt will have 1079 lines of data, while NAME.txt will have only 476 (475 observations, plus an initial seeding one that does not correspond to a real observation)
