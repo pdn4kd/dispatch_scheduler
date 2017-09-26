@@ -53,4 +53,25 @@ class telescope:
         obs_string = 'T1'
         return obs_string
         
-        
+class instrument:
+    def __init__(self,config_file,number,base_directory='.'):
+        self.base_directory = base_directory
+        self.config_file = config_file
+        self.load_config()
+        self.number = number
+
+    def load_config(self):
+        try:
+            config = ConfigObj(self.base_directory+'/config/'+self.config_file)
+            self.efficiency = float(config['Setup']['EFFICIENCY'])
+            self.R = float(config['Setup']['R'])
+            self.λmin = float(config['Setup']['WAVELENGTH_MIN'])
+            self.λmax = float(config['Setup']['WAVELENGTH_MAX'])
+            self.well_depth = float(config['Setup']['WELL_DEPTH'])
+            self.gain = float(config['Setup']['GAIN'])
+            self.read_noise = float(config['Setup']['READ_NOISE'])
+            self.dark_current = float(config['Setup']['DARK_CURRENT'])
+            self.n_pix = float(config['Setup']['PIXELS'])
+        except:
+            print('ERROR accessing configuration file: ' + self.config_file)
+            sys.exit()

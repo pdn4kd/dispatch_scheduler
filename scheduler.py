@@ -15,7 +15,7 @@ import sys
 import simbad_reader
 #import targetlist
 import ephem
-import ipdb
+#import ipdb
 #import env
 import datetime
 import time
@@ -149,7 +149,7 @@ class scheduler:
         #S going to use simple HA weighting for now.
         for target in self.target_list:
             if self.is_observable(target):
-                target['weight'] = self.weight_obstime(target,timeof=self.time)*self.weight_uptime(target,timeof=self.time,latitude=self.latitude,min_alt=30)*self.weight_HA(target,timeof=self.time)
+                target['weight'] = self.weight_obstime(target,timeof=self.time)*self.weight_uptime(target,timeof=self.time,latitude=self.latitude,min_alt=self.target_horizon)*self.weight_HA(target,timeof=self.time)
             else:
                 target['weight'] = -999
         self.target_list = sorted(self.target_list, key=lambda x:-x['weight'])
@@ -205,17 +205,17 @@ class scheduler:
         if (min_alt == None):
             min_alt = self.target_horizon
 
-        try: 
-            time_weight = 1-np.arccos((np.sin(min_alt)-np.sin(math.radians(target['dec']))*np.sin(math.radians(float(latitude))))/(np.cos(math.radians(target['dec']))*np.cos(math.radians(float(latitude)))))/np.pi
-            print("Time weighting:", time_weight)
-        except: #below horizon, circumpolar, or broken.
-            time_weight = 0.0
-            print("Time weighting: unobservable")
-
         # We don't care about circumpolar objects that much
         if(math.radians(float(latitude)) >= np.pi/2-math.radians(target['dec'])):
             time_weight=0.1
-            print("Time weighting:", time_weight)
+            print("Uptime weighting (always up): ", time_weight)
+        else:
+            try: 
+                time_weight = 1-np.arccos((np.sin(min_alt)-np.sin(math.radians(target['dec']))*np.sin(math.radians(float(latitude))))/(np.cos(math.radians(target['dec']))*np.cos(math.radians(float(latitude)))))/np.pi
+                print("Uptime weighting:", time_weight)
+            except: #below horizon, circumpolar, or broken.
+                time_weight = 0.0
+                print("Uptime weighting: unobservable")
 
         return time_weight
 

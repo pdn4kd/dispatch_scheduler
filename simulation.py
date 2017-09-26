@@ -49,6 +49,9 @@ class simulation:
         self.telescopes = []
         for ind in range(tel_num):
             self.telescopes.append(telescope.telescope('telescope.ini',ind+1))
+        self.instruments = []
+        for ind in range(tel_num):
+            self.instruments.append(telescope.instrument('instrument.ini',ind+1))
         
     def update_time(self,time):
         """
@@ -199,7 +202,7 @@ if __name__ == '__main__':
     random.seed(1)
     random.shuffle(sim.scheduler.target_list)
     #change to get first/last x objects in list.
-    sim.scheduler.target_list=sim.scheduler.target_list[:30]
+    sim.scheduler.target_list=sim.scheduler.target_list[:100]
 ##    ipdb.set_trace()
 #    targetlist=simbad_reader.read_simbad('./secret/eta_list.txt')
 #    for target in targetlist:
