@@ -149,7 +149,8 @@ class scheduler:
         #S going to use simple HA weighting for now.
         for target in self.target_list:
             if self.is_observable(target):
-                target['weight'] = self.weight_obstime(target,timeof=self.time)*self.weight_uptime(target,timeof=self.time,latitude=self.latitude,min_alt=self.target_horizon)*self.weight_HA(target,timeof=self.time)
+                #target['weight'] = self.weight_obstime(target,timeof=self.time)*self.weight_uptime(target,timeof=self.time,latitude=self.latitude,min_alt=self.target_horizon)*self.weight_HA(target,timeof=self.time)
+                target['weight'] = self.calc_weight(target,timeof=self.time)
             else:
                 target['weight'] = -999
         self.target_list = sorted(self.target_list, key=lambda x:-x['weight'])

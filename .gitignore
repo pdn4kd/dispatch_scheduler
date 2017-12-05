@@ -74,3 +74,6 @@ target/
 #Generated test files
 secret/
 results/
+
+# Other config
+*00
