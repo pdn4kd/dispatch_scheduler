@@ -73,6 +73,7 @@ class instrument:
             self.dark_current = float(config['Setup']['DARK_CURRENT'])
             self.n_pix = float(config['Setup']['PIXELS'])
             self.read_time = float(config['Setup']['READOUT_TIME'])
+            self.general_noise = float(config['Setup']['GENERAL_NOISE'])
         except:
             print('ERROR accessing configuration file: ' + self.config_file)
             sys.exit()
