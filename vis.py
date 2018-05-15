@@ -116,12 +116,12 @@ def plot_target(simpath,target):
 
     figt = plt.figure()#figsize=(11,6))
     ax2 = figt.add_subplot(2,1,2) #spacing for the plots
-    freqs = np.linspace(1e-6,365.25,100000)
+    freqs = np.linspace(1e-6,np.max([len(sr_days)/3,365.25]),100000)
     win_func = window_function(freqs,dec_times)
     plt.plot(freqs,np.absolute(win_func), color="#000000", linewidth=2)
     ax1 = figt.add_subplot(2,1,1)
-    ax1.plot(sr_days,sr_times,label='sun rises')
-    ax1.plot(ss_days,ss_times,label='sun sets')
+    ax1.plot(sr_days,sr_times,label='sun rises', linewidth=2, color="#FFCC33")
+    ax1.plot(ss_days,ss_times,label='sun sets', linewidth=2, color="#C06816")
 
     """
     pltdays = []
@@ -157,13 +157,13 @@ def plot_target(simpath,target):
         ts_days = np.insert(ts_days, ts_discont, np.nan)
         ts_times = np.insert(ts_times, ts_discont, np.nan)
     
-        ax1.plot(tr_days,tr_times,label='target rises',ms=2)
-        ax1.plot(ts_days,ts_times,label='target sets',ms=2)
+        ax1.plot(tr_days,tr_times,label='target rises',linewidth=1, color="#BCD631")
+        ax1.plot(ts_days,ts_times,label='target sets',linewidth=1, color="#63821F")
     
     except:
         print('No rise/set data for target?')
     # save plotting the obs for last for cleanliness in legend
-    ax1.plot(days,times,'.',label='obs')
+    ax1.plot(days,times,'+',label='obs', color="#000000", ms=1)
     ax1.axis([-.1*len(sr_days),len(sr_days)+.1*len(sr_days),\
                     np.min(ss_times)-.2*np.min(ss_times),\
                     np.max(sr_times)+.2*np.max(sr_times)])
@@ -187,8 +187,11 @@ def plot_target(simpath,target):
     ax1.set_ylabel('Hours from UTC 00:00:00')
     ax2.set_xlabel('Period (Days)')
     ax2.set_ylabel('Aliasing')
+    ax2.set_xlim([0,np.max([len(sr_days)/3,365.25])])
 #    ax2 = figt.add_subplot(2,1,2)
 #    ax2.plot(days,alts,'.')
+    #plt.savefig("Figure_2c.pdf", format='PDF')
+    #plt.savefig("Figure_2c.png", format='PNG', figsize=(10,4))
     plt.show()
 
 def onpick(event,simpath,target_list):
