@@ -82,6 +82,9 @@ class simulation:
                             self.dt_fmt))+'\n')
             wfile.write('ENDTIME: '+utils.utc2bjd(self.endtime.strftime(\
                             self.dt_fmt))+'\n')
+            wfile.write('SITE: '+self.sitename+'\n')
+            wfile.write('INSTRUMENT: '+self.instruments[0].instname+'\n')
+        #Should copy eta_list.txt, simulation.ini, instrument.ini, telescope.ini, scheduler.ini
         
     def get_sim_index(self):
         # see if there is a place to put the sim results, make one if not
@@ -199,10 +202,11 @@ if __name__ == '__main__':
     # seed the random number generator so we get the same list of targets for 
     # alias evalutions
 
-    random.seed(1)
+    # random.seed(1)
+    random.seed()
     random.shuffle(sim.scheduler.target_list)
     #change to get first/last x objects in list.
-    sim.scheduler.target_list=sim.scheduler.target_list[:100]
+    sim.scheduler.target_list=sim.scheduler.target_list[:500]
 ##    ipdb.set_trace()
 #    targetlist=simbad_reader.read_simbad('./secret/eta_list.txt')
 #    for target in targetlist:

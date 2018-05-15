@@ -1,7 +1,7 @@
 # dispatch_scheduler
-A dispatch scheduler simulation that can be modified for personal work. Intended for work with MINERVA collaboration. Run 'simulation.py' to start, or 'vis.py' to visualize the results of previous runs. These scripts should be compatible both Python 2 and 3. Required libraries: collections, configobj, copy, datetime, ephem, glob, ipdb*, math, matplotlib, numpy, os, random, subprocess, sys, time.
+A dispatch scheduler simulation that can be modified for personal work. Intended for work with MINERVA collaboration. Run 'simulation.py' to start, or 'vis.py' to visualize the results of previous runs. These scripts should be compatible both Python 2 and 3. Required libraries: collections, configobj, copy, datetime, ephem, glob, math, matplotlib, numpy, os, random, subprocess, sys, time.
 
-*currently attempting to deprecate.
+For debugging, ipdb may also be needed.
 
 
 # INPUT
@@ -25,9 +25,8 @@ would be 20160101.00001, 20160101.00002, and 20160102.00003.
 Each simulation directory contains a summary file titled as YYYYMMDD.#####.txt,
 which matches the name of the directory it was created in. This file 
 contains some of the general information about the simulation, like the 
-start and end time (in UTC), the name of the target list(?), and and others. I'm going 
-to put the docstring from the weighting funtion in, among other things. Still
-in formulation.
+start and end time (in UTC), the name of the target list(?), and and others.
+Needed feature include docstring from weighting function, location, and instrument used.
 *This is innacurate, but a useful template -- pdn4kd
 
 Each target that was observed will have a a file titled NAME.txt, which 

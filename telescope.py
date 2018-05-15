@@ -63,6 +63,7 @@ class instrument:
     def load_config(self):
         try:
             config = ConfigObj(self.base_directory+'/config/'+self.config_file)
+            self.instname = str(config['Setup']['INSTNAME'])
             self.efficiency = float(config['Setup']['EFFICIENCY'])
             self.R = float(config['Setup']['R'])
             self.λmin = float(config['Setup']['WAVELENGTH_MIN'])
