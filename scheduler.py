@@ -150,7 +150,12 @@ class scheduler:
         for target in self.target_list:
             if self.is_observable(target):
                 #target['weight'] = self.weight_obstime(target,timeof=self.time)*self.weight_uptime(target,timeof=self.time,latitude=self.latitude,min_alt=self.target_horizon)*self.weight_HA(target,timeof=self.time)
-                target['weight'] = self.calc_weight(target,timeof=self.time)
+                #target['weight'] = self.calc_weight(target,timeof=self.time) #Old HA
+                timeobs = self.weight_obstime(target,timeof=self.time) #time sometimes generates exception, why?
+                hourangle = self.weight_HA(target,timeof=self.time)
+                #print(target['name'], timeobs, hourangle)
+                target['weight'] = timeobs*hourangle
+                #target['weight'] = self.calc_weight1(target,timeof=self.time) #MINERVA
             else:
                 target['weight'] = -999
         self.target_list = sorted(self.target_list, key=lambda x:-x['weight'])
@@ -223,6 +228,9 @@ class scheduler:
 
     def weight_obstime(self,target,timeof=None,latitude=None):
         """
+        Weighting target observation by when it was last observed.
+        Default is sep_limit (default: 7200 seconds), which was initially
+        setup for 3 obs/night.
         """
         # if now timeof provided, use current utc
         if timeof == None:
@@ -233,8 +241,8 @@ class scheduler:
         # just comment out if you want a random start time
 #        self.start_ha = -self.sep_limit/3600.
         try:
-            if (timeof-target['last_obs'][1]).total_seconds()<\
-                    self.sep_limit:
+            #print("timeof, last obs", timeof.total_seconds, (target['last_obs'][1]).total_seconds)
+            if (timeof-target['last_obs'][1]).total_seconds() < self.sep_limit:
                 return -1.
         except:
             print("timeof: ", timeof)

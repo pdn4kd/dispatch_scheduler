@@ -111,18 +111,25 @@ class simulation:
 #        with open(self.sim_path+target['name']+'.txt','w') as target_file:
 #            target_file.write(header+'\n')
     def write_target_file(self,target):
-        header = 'obs_start,obs_end,duration,altitude,azimuth,quality'
+        header = 'obs_start,obs_end,duration,altitude,azimuth,quality,exposures'
         with open(self.sim_path+target['name']+'.txt','w') as target_file:
             target_file.write(header+'\n')
 
     def calc_exptime(self,target):
         return target['exptime']
 
+    def calc_skytime(self,target):
+        return target['skytime']
+
+    def calc_exposures(self,target):
+        return target['numberofexposures']
+
     def record_observation(self,target,telescopes=None):
         obs_start = self.time
         exptime = self.calc_exptime(target)
         obs_end = self.time + datetime.timedelta(minutes=exptime)
-        duration = (obs_end-obs_start).total_seconds()
+        duration = self.calc_skytime(target)
+        exposures = self.calc_exposures(target)
         try: os.stat(self.sim_path+target['name']+'.txt')
         except: self.write_target_file(target)
         self.scheduler.obs.date=self.time
@@ -137,10 +144,11 @@ class simulation:
         with open(self.sim_path+target['name']+'.txt','a') as target_file:
             obs_string = utils.utc2bjd(obs_start.strftime(self.dt_fmt))+','+\
                 utils.utc2bjd(obs_end.strftime(self.dt_fmt))+','+\
-                '%08.2f'%duration+','+\
+                '%06.4f'%duration+','+\
                 '%06.2f'%math.degrees(alt)+','+\
                 '%07.2f'%math.degrees(azm)+','+\
-                '%i'%obs_quality+\
+                '%i'%obs_quality+','+\
+                '%i'%exposures+\
                 '\n'         
             print(target['name']+': '+obs_string)
             target_file.write(obs_string)

@@ -24,10 +24,9 @@ would be 20160101.00001, 20160101.00002, and 20160102.00003.
 
 Each simulation directory contains a summary file titled as YYYYMMDD.#####.txt,
 which matches the name of the directory it was created in. This file 
-contains some of the general information about the simulation, like the 
-start and end time (in UTC), the name of the target list(?), and and others.
-Needed feature include docstring from weighting function, location, and instrument used.
-*This is innacurate, but a useful template -- pdn4kd
+contains some of the general information about the simulation. Currently this consists of:
+start and end time (in UTC), site name, and instrument name.
+Weighting function used is not listed, though probably should be.
 
 Each target that was observed will have a a file titled NAME.txt, which 
 includes a single line header of the columns, and each row after being a successful observation. The first observation line is just an initialization, and should not be considered. (An observable object with 0 successful observations will have 2 lines in its output file)
@@ -35,14 +34,23 @@ Objects that are not observable (due to telescope limits, dec, RA vs time of yea
 The information for each observation may change. Presently shown are:
 * Observation start time (JD, easily changeable to other times)
 * Observation end time (JD, easily changeable to other times)
-* Duration of observation (decimal seconds)
+* Duration of open shutter observation (decimal minutes). This can be shorter than start time minus end time.
 * Altitude (degrees)
 * Azimuth (degrees)
+* Number of exposures to get the total observation duration
 * Observation quality (1 if good, 0 if bad. But bad nights aren't logged...)
-The columns are tab-delimited, so spliting at the string '\t' should work. 
+
+All output is in CSV format, despite the .txt name.
 
 There are also some other files, like sunrise.txt, sunset.txt, and for each 
 target, a NAMErise.txt and NAMEset.txt, which are mostly used in the plotting 
 function vis.py. NAMErise/set files give the rise/set times for that object for the entire simulation period.
 
 i.e.:If the period was 1079 days, and only 475 were suitable for observation, NAMErise.txt will have 1079 lines of data, while NAME.txt will have only 476 (475 observations, plus an initial seeding one that does not correspond to a real observation)
+
+# THINGS TO MODIFY
+By default, this code uses varying random seeds. For debugging, you may want to set it to always use the same seed.
+
+Target weighting algorithms are in scheduler.py (a combination of time since last observation and hour angle are used by default, with the base value for time being 2 hours)
+
+You do not have to have all target stars used in a given simulation. In simulation.py, "sim.scheduler.target_list=sim.scheduler.target_list[:500]" selects the first 500. Adjust up/down as desired. You can also sort the list by some feature, such as shortest exposure times. (By default it is shuffled first)
