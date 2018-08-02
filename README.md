@@ -3,6 +3,8 @@ A dispatch scheduler simulation that can be modified for personal work. Intended
 
 For debugging, ipdb may also be needed.
 
+[![astropy](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org/)
+
 
 # INPUT
 Details are pending some stick poking and/or talking with original authors. Provisionally:
