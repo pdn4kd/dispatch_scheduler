@@ -156,8 +156,10 @@ class scheduler:
                 #print(target['name'], timeobs, hourangle)
                 target['weight'] = timeobs*hourangle
                 #target['weight'] = self.calc_weight1(target,timeof=self.time) #MINERVA
+                print(target['name'], "is observable with time&HA", timeobs, hourangle)
             else:
                 target['weight'] = -999
+                print(target['name'], "is NOT observable")
         self.target_list = sorted(self.target_list, key=lambda x:-x['weight'])
         #pass
 
@@ -188,8 +190,8 @@ class scheduler:
         #debugged HA weighting added by pdn, needs reviewing
         target_ha=(math.degrees(self.obs.sidereal_time())/15-target['ra'])
         obs_weight= 1.-np.abs(target_ha/6.0) #allows obs to horizon, but okay if min-alt works
-        print("Positioning diffs:", math.degrees(self.obs.sidereal_time())/15, target['ra'])
-        print("HA, weight:", target_ha, obs_weight)
+        #print("Positioning diffs:", math.degrees(self.obs.sidereal_time())/15, target['ra'])
+        #print("HA, weight:", target_ha, obs_weight)
         return obs_weight
 
 
@@ -241,9 +243,9 @@ class scheduler:
         # just comment out if you want a random start time
 #        self.start_ha = -self.sep_limit/3600.
         try:
-            #print("timeof, last obs", timeof.total_seconds, (target['last_obs'][1]).total_seconds)
+            print("timeof, last_obs, diff, sep_limit", timeof, target['last_obs'][1], (timeof-target['last_obs'][1]).total_seconds(), self.sep_limit)
             if (timeof-target['last_obs'][1]).total_seconds() < self.sep_limit:
-                return -1.
+                return 0.
         except:
             print("timeof: ", timeof)
             print("exception: target['last_obs'] == ", target['last_obs'], "\n")
@@ -254,7 +256,7 @@ class scheduler:
             # add weight for longest days since last observed
             lastobs = (timeof-target['last_obs'][1]).total_seconds() / (86400.)
             cad_weight = lastobs
-            print("Lastobs time weighting:", cad_weight)
+            #print("Lastobs time weighting:", cad_weight)
         except:
             cad_weight = 0.#boop weight to 1 instead?
             print('Error: lastobs timing. Zeroing weight.')
@@ -545,6 +547,8 @@ class scheduler:
                     target['last_obs']=[]
         # reset to sun horizon
         self.obs.horizon = str(self.sun_horizon)
+        # debugging
+        print("Start of night", timeof)
                 
         
     def get_obs_history(self,target,prev_obs=1,simpath=None):

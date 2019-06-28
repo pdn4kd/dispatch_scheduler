@@ -153,7 +153,10 @@ class simulation:
             print(target['name']+': '+obs_string)
             target_file.write(obs_string)
         obs_list = [obs_start,obs_end,duration,alt,azm,obs_quality]
-        target['last_obs'].append(obs_list)
+        # Previously we wanted to keep a list of observations, etc around.
+        #target['last_obs'].append(obs_list)
+        # Now we just want to have the last observation on hand.
+        target['last_obs'] = obs_list
         pass
 
     def record_target(self,target):
@@ -268,8 +271,8 @@ if __name__ == '__main__':
 #                print(target['weight'])
 #            ipdb.set_trace()
             for target in sim.scheduler.target_list:
-                # if the top target is still less than zero, wait five minutes
-                if target['weight']<0.:
+                # if the top target is still less than or equal to zero, wait five minutes
+                if target['weight']<=0.:
                     sim.time+=datetime.timedelta(minutes=5)
                     print('Nothing observed')
                     break
