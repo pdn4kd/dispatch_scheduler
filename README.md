@@ -1,7 +1,7 @@
 # dispatch_scheduler
 A dispatch scheduler simulation that can be modified for personal work. Intended for work with MINERVA collaboration. Run 'simulation.py' to start, or 'vis.py' to visualize the results of previous runs. These scripts should be compatible both Python 2 and 3. Required libraries: collections, configobj, copy, datetime, ephem, glob, math, matplotlib, numpy, os, random, subprocess, sys, time.
 
-For debugging, ipdb may also be needed.
+For debugging, ipdb may also be useful.
 
 [![astropy](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org/)
 
@@ -11,7 +11,7 @@ Details are pending some stick poking and/or talking with original authors. Prov
 
 Required configuration/input files:
 ./config/scheduler.ini ./config/simulation.ini ./config/telescope.ini (Examples are included, and assume you are using the MINERVA array on Mount Hopkins, AZ. Also included are prefixed versions with more or less accurate data for the WIYN, LBT, and a backup of MINERVA)
-./dailyprob.txt, containing probabilities of good weather for every observing day. Example based off of Kitt Peak from 1999-2006 included. This file has a minimum size (364 rows/days).
+./dailyprob.txt, containing probabilities of good weather for every observing day. Example based off of Kitt Peak/WIYN telescope data from 1999-2006 included (http://www-kpno.kpno.noao.edu//Images/wiynWeather_stats.jpeg). This file has a minimum size (364 rows/days).
 
 ./secret/eta_list.txt
 This is a target list (presumably generated from SIMBAD and/or exoplanets.org data), with some details (name, location, magnitude, MKK spectral type, exposure time in decimal minutes). It is formatted like a SIMBAD list aside from having an additional exposure time column (and should appropriate scripts or queries be made functional a method will be documented). This specific location may be modified in the configuration files if all the hard-coded parts are gone. Allowed RA/Dec can be filtered by editing simbad_reader.py
