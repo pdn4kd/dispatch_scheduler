@@ -135,10 +135,15 @@ class simulation:
         self.scheduler.obs.date=self.time
         # the observation 'quality', or whether it was a good observation or 
         # not (1 is good, 0 is unusable)
-        obs_quality = 1
-        target['fixedbody'].compute(self.scheduler.obs)
-        alt = target['fixedbody'].alt
-        azm = target['fixedbody'].az
+        if (target['name'] != "idle"):
+            obs_quality = 1
+            target['fixedbody'].compute(self.scheduler.obs)
+            alt = target['fixedbody'].alt
+            azm = target['fixedbody'].az
+        else:
+            obs_quality = 0
+            alt = np.NaN
+            azm = np.NaN
 #        if target['fixedbody'].alt < 0:
 #            ipdb.set_trace()
         with open(self.sim_path+target['name']+'.txt','a') as target_file:
@@ -275,6 +280,9 @@ if __name__ == '__main__':
                 if target['weight']<=0.:
                     sim.time+=datetime.timedelta(minutes=5)
                     print('Nothing observed')
+                    #idle = OrderedDict([('number', 0.0), ('name', 'idle'), ('ra', np.NaN), ('dec', np.NaN), ('exptime', 5.0), ('skytime', 5.0), ('singleexposure', 5.0), ('numberofexposures', 1.0), ('fixedbody', <ephem.FixedBody None at 0x11b87ab30>)])
+                    idle = dict([('number', 0.0), ('name', 'idle'), ('ra', np.NaN), ('dec', np.NaN), ('exptime', 5.0), ('skytime', 5.0), ('singleexposure', 5.0), ('numberofexposures', 1.0)])
+                    sim.record_observation(idle)
                     break
 #                if sim.scheduler.is_observable(target):
                 total_exp += sim.calc_exptime(target)
@@ -284,6 +292,7 @@ if __name__ == '__main__':
                 target['observed']+=1
 #                target['last_obs']=sim.time
                 sim.record_observation(target)
+                print("target", target['fixedbody'])
                 obs_count+=1
                 sim.time+=datetime.timedelta(minutes=target['exptime'])
                 break

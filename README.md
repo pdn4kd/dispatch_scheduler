@@ -40,7 +40,9 @@ The information for each observation may change. Presently shown are:
 * Altitude (degrees)
 * Azimuth (degrees)
 * Number of exposures to get the total observation duration
-* Observation quality (1 if good, 0 if bad. But bad nights aren't logged...)
+* Observation quality (1 if good, 0 if bad. But bad nights aren't logged)
+
+Telescope idle time (clear night, but no targets are practical to observe) are also logged with a pseudotarget named "idle". It has an observation quality of 0 and undefined altitude/azimuth.
 
 All output is in CSV format, despite the .txt name.
 
