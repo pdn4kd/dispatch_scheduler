@@ -19,7 +19,7 @@ def singletarget(sim,target):
 def get_sun(simpath):
     dt_fmt = '%Y-%m-%dT%H:%M:%S'
     simname = simpath.split('/')[2]
-    summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
+    summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ',encoding=None)
     start = datetime.datetime.strptime(utils.bjd2utc(summ[1,1]),dt_fmt)
     strrises = np.genfromtxt(simpath+'sunrise.txt',dtype=None)
     srises = [datetime.datetime.strptime(utils.bjd2utc(dstr),dt_fmt) for dstr in strrises]
@@ -48,7 +48,7 @@ def get_sun(simpath):
 def get_targ_rise_set(simpath,targetname):
     dt_fmt = '%Y-%m-%dT%H:%M:%S'
     simname = simpath.split('/')[2]
-    summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
+    summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ',encoding=None)
     start = datetime.datetime.strptime(utils.bjd2utc(summ[1,1]),dt_fmt)
     strrises = np.genfromtxt(simpath+targetname+'rise.txt',dtype=None)
     srises = [datetime.datetime.strptime(utils.bjd2utc(dstr),dt_fmt) for dstr in strrises]
@@ -78,7 +78,7 @@ def get_target(simpath,targetname):
 
     dt_fmt = '%Y-%m-%dT%H:%M:%S'
     simname = simpath.split('/')[2]
-    summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
+    summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ',encoding=None)
     start = datetime.datetime.strptime(utils.bjd2utc(summ[1,1]),dt_fmt)
     temp = np.genfromtxt(simpath+targetname+'.txt',names=True,dtype=None,delimiter=',')
     obs = [datetime.datetime.strptime(utils.bjd2utc(dstr),dt_fmt) \
@@ -180,7 +180,7 @@ def plot_target(simpath,target):
 
     dt_fmt = '%Y-%m-%dT%H:%M:%S'
     simname = simpath.split('/')[2]
-    summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ')
+    summ = np.genfromtxt(simpath+simname+'.txt',dtype=None,delimiter=': ',encoding=None)
 
     ax1.set_title(title_str)
     ax1.set_xlabel('Days from '+str(float(summ[1,1][:8])))
@@ -263,8 +263,9 @@ if __name__ == '__main__':
             ax.scatter(ra,dec,color='grey',s=20,zorder=2)
             ax.text(ra,dec,target['name'],size=7)
         else:
-            ax.scatter(ra,dec,c=target['num_obs'],s=20,zorder=2,
-                         vmin=min_num_obs,vmax=max_num_obs,cmap=plt.cm.copper)
+            cnorm=mpl.colors.Normalize(vmin=min_num_obs,vmax=max_num_obs)
+            ax.scatter([ra],[dec],s=20,c=[target['num_obs']],zorder=2,
+                            cmap=plt.cm.copper,norm=cnorm)
             ax.text(ra,dec,target['name'],size=7)
     ax.grid()
     ax.axis([-.5,24.9,-40,95])
