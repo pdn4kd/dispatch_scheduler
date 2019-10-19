@@ -16,6 +16,8 @@ Required configuration/input files:
 ./secret/eta_list.txt
 This is a target list (presumably generated from SIMBAD and/or exoplanets.org data), with some details (name, location, magnitude, MKK spectral type, exposure time in decimal minutes). It is formatted like a SIMBAD list aside from having an additional exposure time column (and should appropriate scripts or queries be made functional a method will be documented). This specific location may be modified in the configuration files if all the hard-coded parts are gone. Allowed RA/Dec can be filtered by editing simbad_reader.py
 
+This directory is not included by default! An example file is included in the main directory named "sample_list.txt"
+
 # OUTPUT
 All of the resulting information from a simulation run is recorded in the results
 directory. Each simulation creates its own directory, with a title of 
