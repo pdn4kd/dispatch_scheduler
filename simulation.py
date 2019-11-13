@@ -84,6 +84,8 @@ class simulation:
                             self.dt_fmt))+'\n')
             wfile.write('SITE: '+self.sitename+'\n')
             wfile.write('INSTRUMENT: '+self.instruments[0].instname+'\n')
+            wfile.write('TELESCOPE DIAMETER: '+self.telescope[0].diameter+'\n')
+            wfile.write('COLLECTING AREA: '+self.telescope[0].area+'\n')
         #Should copy eta_list.txt, simulation.ini, instrument.ini, telescope.ini, scheduler.ini
         
     def get_sim_index(self):
