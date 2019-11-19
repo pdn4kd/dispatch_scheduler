@@ -25,19 +25,15 @@ class telescope:
             self.slewrate = float(config['Setup']['SLEWRATE'])
             self.alt = float(config['Setup']['PARK_ALT'])
             self.azm = float(config['Setup']['PARK_AZM'])
+            self.diameter = float(config['Setup']['DIAMETER'])
         except:
             print('ERROR accessing configuration file: ' + self.config_file)
             sys.exit()
         try:
             self.area = float(config['Setup']['AREA'])
         except:
-            try:
-                self.diameter = float(config['Setup']['DIAMETER'])
-                self.area = math.pi*self.diameter**2
-            except:
-                print('ERROR accessing configuration file: ' + self.config_file)
-                sys.exit()
-
+            self.area = math.pi*self.diameter**2
+            print('WARNING telescope area not found, estimating from diameter (0 obstruction)')
     
 
     def acquire_target(self,target):
