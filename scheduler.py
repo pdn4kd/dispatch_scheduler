@@ -394,7 +394,7 @@ class scheduler:
         except:
             cad_weight = 0.
  
-	# note; this weighting downweights stars at poor declinations that never get to high altitudes.  
+    # note; this weighting downweights stars at poor declinations that never get to high altitudes.  
         self.obs.date = timeof
         self.obs.horizon = str(self.target_horizon)
         target['fixedbody'].compute(self.obs)
@@ -447,7 +447,7 @@ class scheduler:
             cad_weight = 0.#boop weight to 1 instead?
             print('Error: lastobs timing. Zeroing weight.\n')
  
-	# note; this weighting downweights stars at poor declinations that never get to high altitudes.  
+    # note; this weighting downweights stars at poor declinations that never get to high altitudes.  
         target_ha=(math.degrees(self.obs.sidereal_time())-target['ra'])
         obs_weight= 1.-np.abs(target_ha/6.0)
 

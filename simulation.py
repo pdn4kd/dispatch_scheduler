@@ -207,6 +207,38 @@ class simulation:
             return False
         else:
             return True
+    
+    def record_summary(self,weather,obs_count,total_exp,target_list,idle):
+        if not os.path.isfile(self.sim_path+'summary.txt'):
+            with open(self.sim_path+'summary.txt','a') as summaryfile:
+                summaryheader = 'sunset,sunrise,weather,obs_count,total_exp,idle_count'
+                for target in target_list:
+                    summaryheader += (','+target['name']+'_obs,'+target['name']+'_observable')
+                summaryheader += '\n'
+                summaryfile.write(summaryheader)
+                #summaryfile.write('sunset,sunrise,weather,obs_count,total_exp\n')
+                summaryfile.close()
+        with open(self.sim_path+'summary.txt','a') as summaryfile:
+            sstime = self.scheduler.nextsunset(sim.time)
+            #sstime = utils.utc2bjd(sstime.strftime(self.dt_fmt))
+            srtime = self.scheduler.nextsunrise(sim.time)
+            #srtime = utils.utc2bjd(srtime.strftime(self.dt_fmt))
+            #summarystring = sstime+','+srtime+','+str(weather)+','+str(obs_count)+','+str(total_exp)+','+str(idle)
+            summarystring = utils.utc2bjd(sstime.strftime(self.dt_fmt))+','+utils.utc2bjd(srtime.strftime(self.dt_fmt))+','+str(weather)+','+str(obs_count)+','+str(total_exp)+','+str(idle)
+            for target in target_list:
+                observable = "0"
+                # Checking 20 spots in each night if a target is theoretically 
+                # observeable. This is seperate from the normal checks because 
+                # we want to know if it's possible in eg: times where other 
+                # observations happen. Especially for long observation times.
+                for t in np.linspace(0, 1, 20):
+                    time = sstime + ((srtime-sstime)*t)
+                    if sim.scheduler.is_observable(target,time):
+                        observable = "1"
+                        break
+                summarystring += (','+str(target['observed'])+','+observable)
+            summarystring += '\n'
+            summaryfile.write(summarystring)
 
         
 
@@ -242,6 +274,8 @@ if __name__ == '__main__':
     obs_count=0
     total_exp = 0
     setimes = []
+    idle_count = 0
+    weather = 1
 #    ipdb.set_trace()
     # while we are still in the simulation time frame
     while sim.time < sim.endtime:
@@ -255,12 +289,20 @@ if __name__ == '__main__':
             sim.record_sun()
             for target in sim.scheduler.target_list:
                 sim.record_target(target)
+            # record summary of previous night's results
+            sim.record_summary(weather,obs_count,total_exp,sim.scheduler.target_list,idle_count)
             # change the current time to the time of sunset and add one second
             sim.time = sim.scheduler.nextsunset(sim.time)+\
                 datetime.timedelta(seconds=1)
             sim.update_time(sim.time)
+            weather = 1
+            # resetting values that are only tracked per-night. remove to make cumululative
+            idle_count = 0
+            obs_count = 0
+            total_exp = 0
             if not sim.check_weather(sim.time):
                 print('NIGHT LOST DUE TO WEATHER')
+                weather = 0
                 sim.time = sim.scheduler.nextsunrise(sim.time)+\
                     datetime.timedelta(seconds=1)
             sim.scheduler.prep_night()
@@ -282,7 +324,7 @@ if __name__ == '__main__':
                 if target['weight']<=0.:
                     sim.time+=datetime.timedelta(minutes=5)
                     print('Nothing observed')
-                    #idle = OrderedDict([('number', 0.0), ('name', 'idle'), ('ra', np.NaN), ('dec', np.NaN), ('exptime', 5.0), ('skytime', 5.0), ('singleexposure', 5.0), ('numberofexposures', 1.0), ('fixedbody', <ephem.FixedBody None at 0x11b87ab30>)])
+                    idle_count += 1
                     idle = dict([('number', 0.0), ('name', 'idle'), ('ra', np.NaN), ('dec', np.NaN), ('exptime', 5.0), ('skytime', 5.0), ('singleexposure', 5.0), ('numberofexposures', 1.0)])
                     sim.record_observation(idle)
                     break
@@ -299,7 +341,7 @@ if __name__ == '__main__':
                 sim.time+=datetime.timedelta(minutes=target['exptime'])
                 break
             sim.time+=datetime.timedelta(minutes=5)
-    print(obs_count)
+    #print("obs_count, total_exp", obs_count, total_exp)
     #ipdb.set_trace()
         
     pass
@@ -312,4 +354,6 @@ if __name__ == '__main__':
     # if out of simulation time frame
     #     end observation
         
+    # final recording after end of simulation
+    sim.record_summary(weather,obs_count,total_exp,sim.scheduler.target_list,idle_count)
     print('Completed simulation '+sim.sim_name)
