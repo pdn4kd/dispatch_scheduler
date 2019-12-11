@@ -14,6 +14,7 @@ import subprocess
 from configobj import ConfigObj
 import simbad_reader
 import utils
+import shutil
 
 class simulation:
     def __init__(self,config_file,base_directory='.'):
@@ -66,7 +67,8 @@ class simulation:
                                    
     def init_infofile(self,sheduler):
         """
-        a file that contains all the info for the simulation
+        a file that contains all the general info for the simulation, as well
+        as the configuration files with the initial inputs
         """
         self.sim_ind = self.get_sim_index()
         today_str = datetime.datetime.utcnow().strftime('%Y-%m-%d')
@@ -86,7 +88,11 @@ class simulation:
             wfile.write('INSTRUMENT: '+self.instruments[0].instname+'\n')
             wfile.write('TELESCOPE DIAMETER: '+str(self.telescopes[0].diameter)+'\n')
             wfile.write('COLLECTING AREA: '+str(self.telescopes[0].area)+'\n')
-        #Should copy eta_list.txt, simulation.ini, instrument.ini, telescope.ini, scheduler.ini
+        shutil.copy('./config/simulation.ini', self.sim_path)
+        shutil.copy('./config/scheduler.ini', self.sim_path)
+        shutil.copy('./config/telescope.ini', self.sim_path)
+        shutil.copy('./config/instrument.ini', self.sim_path)
+        shutil.copy(self.scheduler.targets_file, self.sim_path)
         
     def get_sim_index(self):
         # see if there is a place to put the sim results, make one if not
@@ -231,7 +237,7 @@ class simulation:
                 # observeable. This is seperate from the normal checks because 
                 # we want to know if it's possible in eg: times where other 
                 # observations happen. Especially for long observation times.
-                for t in np.linspace(0, 1, 20):
+                for t in np.arange(0, 1, 0.05):
                     time = sstime + ((srtime-sstime)*t)
                     if sim.scheduler.is_observable(target,time):
                         observable = "1"
