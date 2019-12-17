@@ -74,3 +74,8 @@ class instrument:
         except:
             print('ERROR accessing configuration file: ' + self.config_file)
             sys.exit()
+        try:
+            self.SNR = float(config['Setup']['SNR'])
+        except:
+            print('WARNING: No SNR information in configuration file (' + self.config_file + '), assuming nominal value (0)')
+            self.SNR = 0
