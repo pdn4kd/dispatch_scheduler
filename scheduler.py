@@ -67,6 +67,8 @@ class scheduler:
             self.target_horizon = float(config['Setup']['MINALT'])
             self.targets_file = config['Setup']['TARGETSFILE']
             self.min_moon_sep = float(config['Setup']['MINMOONSEP'])
+            #self.tac_type = config['Setup']['TAC_TYPE']
+            #self.tac_fraction = float(config['Setup']['TAC_FRACTION'])
             # used for minerva logging
 #            self.logger_name = config['Setup']['LOGNAME']
 

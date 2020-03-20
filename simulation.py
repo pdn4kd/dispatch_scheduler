@@ -85,7 +85,7 @@ class simulation:
             wfile.write('ENDTIME: '+utils.utc2bjd(self.endtime.strftime(\
                             self.dt_fmt))+'\n')
             wfile.write('SITE: '+self.sitename+'\n')
-            wfile.write('INSTRUMENT: '+self.instruments[0].instname+'\n')
+            wfile.write('INSTRUMENT NAME: '+self.instruments[0].instname+'\n')
             wfile.write('TELESCOPE DIAMETER: '+str(self.telescopes[0].diameter)+'\n')
             wfile.write('COLLECTING AREA: '+str(self.telescopes[0].area)+'\n')
         shutil.copy('./config/simulation.ini', self.sim_path)
@@ -214,11 +214,13 @@ class simulation:
         else:
             return True
     
-    def record_summary(self,weather,obs_count,total_exp,target_list,idle):
+    def record_summary(self,weather,obs_count,total_exp,idle):
+        #Sorting by RA for consistent outputs
+        self.scheduler.target_list = sorted(self.scheduler.target_list, key=lambda x:x['ra'])
         if not os.path.isfile(self.sim_path+'summary.txt'):
             with open(self.sim_path+'summary.txt','a') as summaryfile:
                 summaryheader = 'sunset,sunrise,weather,obs_count,total_exp,idle_count'
-                for target in target_list:
+                for target in self.scheduler.target_list:
                     summaryheader += (','+target['name']+'_obs,'+target['name']+'_observable')
                 summaryheader += '\n'
                 summaryfile.write(summaryheader)
@@ -231,13 +233,13 @@ class simulation:
             #srtime = utils.utc2bjd(srtime.strftime(self.dt_fmt))
             #summarystring = sstime+','+srtime+','+str(weather)+','+str(obs_count)+','+str(total_exp)+','+str(idle)
             summarystring = utils.utc2bjd(sstime.strftime(self.dt_fmt))+','+utils.utc2bjd(srtime.strftime(self.dt_fmt))+','+str(weather)+','+str(obs_count)+','+str(total_exp)+','+str(idle)
-            for target in target_list:
+            for target in self.scheduler.target_list:
                 observable = "0"
-                # Checking 20 spots in each night if a target is theoretically 
+                # Checking 50 spots in each night if a target is theoretically 
                 # observeable. This is seperate from the normal checks because 
                 # we want to know if it's possible in eg: times where other 
                 # observations happen. Especially for long observation times.
-                for t in np.arange(0, 1, 0.05):
+                for t in np.arange(0, 1, 0.02):
                     time = sstime + ((srtime-sstime)*t)
                     if sim.scheduler.is_observable(target,time):
                         observable = "1"
@@ -296,7 +298,7 @@ if __name__ == '__main__':
             for target in sim.scheduler.target_list:
                 sim.record_target(target)
             # record summary of previous night's results
-            sim.record_summary(weather,obs_count,total_exp,sim.scheduler.target_list,idle_count)
+            sim.record_summary(weather,obs_count,total_exp,idle_count)
             # change the current time to the time of sunset and add one second
             sim.time = sim.scheduler.nextsunset(sim.time)+\
                 datetime.timedelta(seconds=1)
@@ -361,5 +363,5 @@ if __name__ == '__main__':
     #     end observation
         
     # final recording after end of simulation
-    sim.record_summary(weather,obs_count,total_exp,sim.scheduler.target_list,idle_count)
+    sim.record_summary(weather,obs_count,total_exp,idle_count)
     print('Completed simulation '+sim.sim_name)
