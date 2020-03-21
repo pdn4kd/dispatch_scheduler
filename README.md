@@ -28,11 +28,13 @@ YYYYMMDD.#####, where the YYYYMMDD is the date the simulation was run, and the
 run on 20160101 and one simulation run on 20160102, the directories produced 
 would be 20160101.00001, 20160101.00002, and 20160102.00003. 
 
-Each simulation directory contains a summary file titled as YYYYMMDD.#####.txt,
+Each simulation directory contains a metadata file titled as YYYYMMDD.#####.txt,
 which matches the name of the directory it was created in. This file 
 contains some of the general information about the simulation. Currently this consists of:
 start and end time (in UTC), site name, and instrument name.
 Weighting function used is not listed, though probably should be.
+
+The configuration files (simulation.ini, scheduler.ini, telescope.ini, and instrument.ini) are copied from config/ to the output folder, as are the exposure times (secret/eta_list.txt).
 
 Each target that was observed will have a a file titled NAME.txt, which 
 includes a single line header of the columns, and each row after being a successful observation. The first observation line is just an initialization, and should not be considered. (An observable object with 0 successful observations will have 2 lines in its output file)
@@ -47,6 +49,8 @@ The information for each observation may change. Presently shown are:
 * Observation quality (1 if good, 0 if bad. But bad nights aren't logged)
 
 Telescope idle time (clear night, but no targets are practical to observe) are also logged with a pseudotarget named "idle". It has an observation quality of 0 and undefined altitude/azimuth.
+
+Finally, a nightly summary file (summary.txt) is generated to collate all the features of a given night. Its columns are: sunset time, sunrise time, weather, total number of observations, total time spent observing, total number of idle periods, how many times each star was observed, and if the star was even observable that night (assuming good weather). The last two are per star, so if the target list contains eg: 5 stars, there will be 16 columns (6 general columns and 5*2 for the stars).
 
 All output is in CSV format, despite the .txt name.
 
